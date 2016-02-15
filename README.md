@@ -1,6 +1,8 @@
 # simple-config
 Annotation based simpl configuration helper libbrary
 
+Note: It's too hard work, for me, to make English manual. Translation from README.kr.md to this file is always welcome.
+
 # Simple usage
 ## Declare config Class with @Config annotation
 ```java
