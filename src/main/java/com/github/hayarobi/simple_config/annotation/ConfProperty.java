@@ -14,17 +14,21 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfProperty {
 	public String value() default "[unassigned]";
+	/**
+	 * default is false.
+	 * @return
+	 */
 	public boolean required() default false;
 	
 	
 	/**
-	 * only for collection type
+	 * only for collection type. default is comma(,).
 	 * @return 
 	 */
 	public String separator() default ",";
 	
 	/**
-	 * only for Enum type
+	 * only for Enum type. default is true
 	 * @return
 	 */
 	public boolean caseSensitive() default true;
