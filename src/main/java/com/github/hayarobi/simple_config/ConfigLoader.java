@@ -16,6 +16,9 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.hayarobi.simple_config.annotation.ConfIgnore;
 import com.github.hayarobi.simple_config.annotation.ConfProperty;
 import com.github.hayarobi.simple_config.annotation.Config;
@@ -29,6 +32,8 @@ public class ConfigLoader {
 	private static final String UNASSIGNED_PLACEHOLDER = "[unassigned]";
 	private static final char PROP_SEPARATOR = '.';
 
+	private Logger log = LoggerFactory.getLogger(ConfigLoader.class);
+	
 	Map<String, String> props = null;
 	ValueParserMap parserMap = new ValueParserMap();
 	private String elementSeparator;
@@ -66,6 +71,9 @@ public class ConfigLoader {
 			boolean enumCaseSensitive = true;
 			ConfIgnore ignoreAnnotation = field.getAnnotation(ConfIgnore.class);
 			if( null != ignoreAnnotation ) {
+				if( log.isTraceEnabled() ) {
+					log.trace("field {}#{} is ignored by @ConfIgnored annotation.", clazz.getSimpleName(), field.getName());
+				}
 				continue;
 			}
 			ConfProperty propAnnotation = field.getAnnotation(ConfProperty.class);
@@ -73,16 +81,22 @@ public class ConfigLoader {
 					|| UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
 				propName += field.getName();
 				elementSeparator = ",";
+				if( log.isTraceEnabled() ) {
+					log.trace("field {}#{} has no @ConfProperty annotation, so default setting is applied.", clazz.getSimpleName(), field.getName());
+				}
 			} else {
 				propName += propAnnotation.value();
 				required = propAnnotation.required();
 				elementSeparator = propAnnotation.separator();
 				enumCaseSensitive = propAnnotation.caseSensitive();
 			}
+			if( log.isTraceEnabled() ) {
+				log.trace("finding config value of field {}#{} by property name {}.", clazz.getSimpleName(), field.getName()
+						, propName);
+			}
+
 			// abstract클래스나 인터페이스는 아직 허용하지 않음
 			Class<?> fieldType = field.getType();
-			Modifier.isInterface(fieldType.getModifiers());
-			Modifier.isAbstract(fieldType.getModifiers());
 			if(   !fieldType.isPrimitive() &&
 					( Modifier.isInterface(fieldType.getModifiers()) || Modifier.isAbstract(fieldType.getModifiers()) ) 
 			) {
@@ -91,6 +105,9 @@ public class ConfigLoader {
 			
 			String value = props.get(propName);
 			if (null != value) {
+				if( log.isTraceEnabled() ) {
+					log.trace("Found config value of field {}#{}: {}.", clazz.getSimpleName(), field.getName(), value);
+				}
 				if( Collection.class.isAssignableFrom(fieldType) ) {
 					putCollectionValueTo(configObject, enumCaseSensitive, field, value, elementSeparator);
 				} else {

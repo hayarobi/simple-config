@@ -104,6 +104,13 @@ public class ConfigLoaderTest {
 		assertEquals(15, sconf0.getMaxConn());
 		assertEquals(99.9, sconf0.getEra(), 0.00001);
 		
+		// no config class
+		try {
+			ConfigLoader nothing = target.loadConfig(ConfigLoader.class);
+			fail();
+		} catch(IllegalArgumentException expected ) {
+			assertTrue(expected.getMessage().endsWith("is not config class."));
+		}
 		// required field가 빠진 경우
 		Map<String, String> missingNotRequired = new HashMap<String, String>(baseMap);
 		missingNotRequired.remove("com.github.hayarobi.simple_config.sample.DataConfig.user");

@@ -13,6 +13,7 @@ public class DataConfig {
 	private String user;
 	private String pass;
 	private int maxConn;
+	
 	/**
 	 * @return the url
 	 */
