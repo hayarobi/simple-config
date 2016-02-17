@@ -36,7 +36,7 @@ public class ConfigLoader {
 	
 	Map<String, String> props = null;
 	ValueParserMap parserMap = new ValueParserMap();
-	private String elementSeparator;
+	private final String elementSeparator = ",";
 	
 	public ConfigLoader(Map<String, String> properties) {
 		this.props = new HashMap<String, String>(properties);
@@ -80,14 +80,12 @@ public class ConfigLoader {
 			if (propAnnotation == null
 					|| UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
 				propName += field.getName();
-				elementSeparator = ",";
 				if( log.isTraceEnabled() ) {
 					log.trace("field {}#{} has no @ConfProperty annotation, so default setting is applied.", clazz.getSimpleName(), field.getName());
 				}
 			} else {
 				propName += propAnnotation.value();
 				required = propAnnotation.required();
-				elementSeparator = propAnnotation.separator();
 				enumCaseSensitive = propAnnotation.caseSensitive();
 			}
 			if( log.isTraceEnabled() ) {

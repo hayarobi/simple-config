@@ -20,13 +20,7 @@ public @interface ConfProperty {
 	 */
 	public boolean required() default false;
 	
-	
-	/**
-	 * only for collection type. default is comma(,).
-	 * @return 
-	 */
-	public String separator() default ",";
-	
+		
 	/**
 	 * only for Enum type. default is true
 	 * @return
