@@ -19,7 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.hayarobi.simple_config.ConfigLoader;
+import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.sample.DataConfig;
 import com.github.hayarobi.simple_config.sample.EnumSample;
 import com.github.hayarobi.simple_config.sample.EnumTestConfig;

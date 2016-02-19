@@ -10,6 +10,10 @@ import com.github.hayarobi.simple_config.annotation.Config;
 public class EnumTestConfig {
 	@ConfProperty(required=true)
 	private EnumSample planet;
+
+	@ConfProperty(caseSensitive=false)
+	private EnumSample planet2;
+
 	private RoundingMode round = RoundingMode.HALF_UP;
 	
 	private ArrayList<EnumSample> lists;
@@ -22,6 +26,12 @@ public class EnumTestConfig {
 	}
 	public RoundingMode getRound() {
 		return round;
+	}
+	/**
+	 * @return the planet2
+	 */
+	public EnumSample getPlanet2() {
+		return planet2;
 	}
 	
 	

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.load.PropertiesReader;
 import com.github.hayarobi.simple_config.load.SourceReader;
 

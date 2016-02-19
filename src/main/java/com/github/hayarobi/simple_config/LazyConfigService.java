@@ -2,6 +2,8 @@ package com.github.hayarobi.simple_config;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.github.hayarobi.simple_config.load.ConfigLoader;
+
 /**
  * 설정을 저장 관리하는 클래스.
  * @author sg13park

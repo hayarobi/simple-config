@@ -5,5 +5,8 @@ public enum EnumSample {
 	VENUS,
 	EARTH,
 	MARS,
-	JUPITER
+	JUPITER,
+	SATTERN,
+	NEPTUNE,
+	URANUS
 }

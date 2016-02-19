@@ -31,11 +31,6 @@ public class ConfigServiceBuilder {
 		throw new RuntimeException("Not implemented yet.");
 	}
 
-	public <T> ConfigServiceBuilder addNewType(Class<T> type, ValueParser<T> valueParser) {
-		// TODO: 구현하자
-		throw new RuntimeException("Not implemented yet.");
-	}
-	
 	public ConfigService build() {
 		// TODO: 구현하자.
 		throw new RuntimeException("Not implemented yet.");
