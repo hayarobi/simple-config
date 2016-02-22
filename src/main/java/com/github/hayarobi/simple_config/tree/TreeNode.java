@@ -12,7 +12,6 @@ public interface TreeNode {
 	public String getFullName();
 	public boolean isLeaf();
 	public String getValueAsString() throws IllegalCallException;
-	public String[] getValueAsStringArray() throws IllegalCallException;
 	public List<TreeNode> getChildren() throws IllegalCallException;
 	
 }
