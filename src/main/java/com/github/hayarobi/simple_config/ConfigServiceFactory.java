@@ -8,7 +8,9 @@ import java.util.Map;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.load.PropertiesReader;
+import com.github.hayarobi.simple_config.load.RawConfig;
 import com.github.hayarobi.simple_config.load.SourceReader;
+import com.github.hayarobi.simple_config.load.ValueExtractorManager;
 
 /**
  * configService를 생성하기 위한 팩토리 클래스.
@@ -22,30 +24,27 @@ public class ConfigServiceFactory {
 
 	public ConfigService craeteServiceFromResource(String resourcePath) {
 		InputStream inputStream = getInputstreamFromResource(resourcePath);
-		Map<String, String> propMap;
+		RawConfig propMap;
 		try {
 			propMap = selectSourceReader(resourcePath).read(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("IO exception while reading config source "+resourcePath, e);
 		}
-		ConfigLoader loader = new ConfigLoader(propMap);
+		ValueExtractorManager vem = new ValueExtractorManager();
+		ConfigLoader loader = new ConfigLoader(propMap, vem);
 		return new LazyConfigService(loader);
 	}
 	
 	public ConfigService craeteServiceFromFile(String filePath) {
 		InputStream inputStream = getInputstreamFromFile(filePath);
-		Map<String, String> propMap;;
+		RawConfig propMap;
 		try {
 			propMap = selectSourceReader(filePath).read(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("IO exception while reading config source "+filePath, e);
 		}
-		ConfigLoader loader = new ConfigLoader(propMap);
-		return new LazyConfigService(loader);
-	}
-
-	public ConfigService craeteServiceFromMap(Map<String, String> propMap) {
-		ConfigLoader loader = new ConfigLoader(propMap);
+		ValueExtractorManager vem = new ValueExtractorManager();
+		ConfigLoader loader = new ConfigLoader(propMap, vem);
 		return new LazyConfigService(loader);
 	}
 

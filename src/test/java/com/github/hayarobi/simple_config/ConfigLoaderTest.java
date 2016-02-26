@@ -14,80 +14,54 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
+import com.github.hayarobi.simple_config.load.PropertiesRawConfig;
+import com.github.hayarobi.simple_config.load.RawConfig;
+import com.github.hayarobi.simple_config.load.ValueExtractorManager;
 import com.github.hayarobi.simple_config.sample.DataConfig;
 import com.github.hayarobi.simple_config.sample.EnumSample;
 import com.github.hayarobi.simple_config.sample.EnumTestConfig;
 import com.github.hayarobi.simple_config.sample.ListAndDateConfig;
+import com.github.hayarobi.simple_config.sample.MapAndAbstractionConfig;
 import com.github.hayarobi.simple_config.sample.OtherConfig;
 
 public class ConfigLoaderTest {
 
 	public static final String SAMPLE_LIST_PROPERTIES = "sample-list.properties";
 	public static final String SAMPLECONF_PROPERTIES = "sampleconf.properties";
+	private ValueExtractorManager vem;
 
 
 	@Before
 	public void setUp() throws Exception {
+		vem = new ValueExtractorManager();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
 	
-	public void testConfigLoaderConstructors() throws IOException {
-		Properties baseProp = new Properties();
-		try {
-			InputStream inputStream = getClass().getClassLoader()
-					.getResourceAsStream(SAMPLECONF_PROPERTIES);
-			baseProp.load(inputStream);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to reload config: "
-					+ e.getMessage(), e);
-		}
-		Map<String, String> baseMap = new HashMap<String, String>((Map)baseProp);
-		
-		ConfigLoader loader1 = new ConfigLoader(baseMap);
+	public void testConfigLoaderConstructor() throws IOException {
+	
+		ConfigLoader loader1 = new ConfigLoader(createRootConfig(SAMPLECONF_PROPERTIES), vem);
 		DataConfig dconf1 = loader1.loadConfig(DataConfig.class);
 		OtherConfig sconf1 = loader1.loadConfig(OtherConfig.class);
 		assertNotNull(dconf1);
 		assertNotNull(sconf1);
-		
-		InputStream inputStream = getClass().getClassLoader()
-				.getResourceAsStream(SAMPLECONF_PROPERTIES);
-		baseProp.load(inputStream);
-		baseMap = new HashMap<String, String>((Map)baseProp);
-		
-		ConfigLoader loader2 = new ConfigLoader(baseMap);
-		DataConfig dconf2 = loader1.loadConfig(DataConfig.class);
-		OtherConfig sconf2 = loader1.loadConfig(OtherConfig.class);
-		
-		assertEquals(dconf1, dconf2);
-		assertEquals(sconf1, sconf2);
-		
-		
 	}
 
 	@Test
 	public void testGetConfig() {
-		Properties fullProps = new Properties();
-		try {
-			InputStream inputStream = getClass().getClassLoader()
-					.getResourceAsStream(SAMPLECONF_PROPERTIES);
-			fullProps.load(inputStream);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to reload config: "
-					+ e.getMessage(), e);
-		}
-		Map<String, String> baseMap = new HashMap<String, String>((Map)fullProps);
+		Map<String, String> baseMap = loadResourceToMap(SAMPLECONF_PROPERTIES);
+		RawConfig rootConfig = new PropertiesRawConfig("", baseMap);
 
-
-		ConfigLoader target = new ConfigLoader(baseMap);
+		ConfigLoader target = new ConfigLoader(rootConfig, vem);
 
 		DataConfig dconf0 = target.loadConfig(DataConfig.class);
 		assertNotNull(dconf0);
@@ -116,7 +90,7 @@ public class ConfigLoaderTest {
 		missingNotRequired.remove("com.github.hayarobi.simple_config.sample.DataConfig.user");
 		missingNotRequired.remove("com.github.hayarobi.simple_config.sample.DataConfig.pass");
 		missingNotRequired.remove("theothers.numatc");
-		target = new ConfigLoader(missingNotRequired);
+		target = new ConfigLoader(new PropertiesRawConfig("", missingNotRequired), vem);
 		DataConfig dconf1 = target.loadConfig(DataConfig.class);
 		assertEquals(dconf0.getUrl(), dconf1.getUrl());
 		assertNull(dconf1.getUser());
@@ -130,7 +104,7 @@ public class ConfigLoaderTest {
 		// required field가 빠진 경우 
 		Map<String, String> missingRequired = new HashMap<String, String>(baseMap);
 		missingRequired.remove("theothers.result");
-		target = new ConfigLoader(missingRequired);
+		target = new ConfigLoader(new PropertiesRawConfig("", missingRequired), vem);
 		try {
 			OtherConfig toException = target.loadConfig(OtherConfig.class);
 			fail();
@@ -139,30 +113,48 @@ public class ConfigLoaderTest {
 			assertTrue(ex.getMessage().contains("is missing"));
 		}
 	}
-	
-	
-	@Test
-	public void testArrayAndDate() {
+
+	/**
+	 * @param propResourceName 
+	 * @return
+	 */
+	protected RawConfig createRootConfig(String propResourceName) {
+		Map<String, String> baseMap = loadResourceToMap(propResourceName);
+		return new PropertiesRawConfig("", baseMap);
+	}
+
+	/**
+	 * @param propResourceName
+	 * @return
+	 */
+	protected Map<String, String> loadResourceToMap(String propResourceName) {
 		Properties fullProps = new Properties();
 		try {
 			InputStream inputStream = getClass().getClassLoader()
-					.getResourceAsStream(SAMPLE_LIST_PROPERTIES);
+					.getResourceAsStream(propResourceName);
 			fullProps.load(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to reload config: "
 					+ e.getMessage(), e);
 		}
 		Map<String, String> baseMap = new HashMap<String, String>((Map)fullProps);
+		return baseMap;
+	}
+	
+	
+	@Test
+	public void testArrayAndDate() {
+		Map<String, String> baseMap = loadResourceToMap(SAMPLE_LIST_PROPERTIES);
 
-		ConfigLoader target = new ConfigLoader(baseMap);
+		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
 
 		ListAndDateConfig conf = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf.getFruitList());
 		System.out.println("list1 : "+conf.getFruitList());
 		assertEquals(3, conf.getFruitList().size());
-		assertTrue(conf.getFruitList().contains("apple"));
-		assertTrue(conf.getFruitList().contains("orange"));
-		assertTrue(conf.getFruitList().contains("mango"));
+		assertEquals("apple", conf.getFruitList().get(0));
+		assertEquals("orange", conf.getFruitList().get(1));
+		assertEquals("mango", conf.getFruitList().get(2));
 
 		assertEquals(2, conf.getMagicNumbers().size());
 		System.out.println("list2 : "+conf.getMagicNumbers());
@@ -176,13 +168,13 @@ public class ConfigLoaderTest {
 
 		Map<String, String> props1 = new HashMap<String, String>(baseMap);
 		props1.put("list.and.date.fromTime", "2015-04-03 12:34:56.111");
-		target = new ConfigLoader(props1);
+		target = new ConfigLoader(new PropertiesRawConfig("", props1), vem);
 		ListAndDateConfig conf1 = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf1.getFromTime());
 		System.out.println( "2015-04-03 12:34:56.111 and "+conf1.getFromTime());
 
 		props1.put("list.and.date.fromTime", "2015-05-04 12:34:56");
-		target = new ConfigLoader(props1);
+		target = new ConfigLoader(new PropertiesRawConfig("", props1), vem);
 		conf1 = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf1.getFromTime());
 		System.out.println( "2015-05-04 12:34:56 and "+conf1.getFromTime());
@@ -190,18 +182,10 @@ public class ConfigLoaderTest {
 	
 	@Test
 	public void testEnum() {
-		Properties fullProps = new Properties();
-		try {
-			InputStream inputStream = getClass().getClassLoader()
-					.getResourceAsStream(SAMPLECONF_PROPERTIES);
-			fullProps.load(inputStream);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to reload config: "
-					+ e.getMessage(), e);
-		}
-		Map<String, String> baseMap = new HashMap<String, String>((Map)fullProps);
+		Map<String, String> baseMap = loadResourceToMap(SAMPLECONF_PROPERTIES);
 
-		ConfigLoader target = new ConfigLoader(baseMap);
+		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+
 
 		EnumTestConfig actual = target.loadConfig(EnumTestConfig.class);
 		assertNotNull(actual);
@@ -218,12 +202,43 @@ public class ConfigLoaderTest {
 		Map<String, String> wrongLiterals = new HashMap<String, String>(baseMap);
 		wrongLiterals.put("enums.planet", "PLUTO");
 		try {
-			target = new ConfigLoader(wrongLiterals);
+			target = target = new ConfigLoader(new PropertiesRawConfig("", wrongLiterals), vem);
 			actual = target.loadConfig(EnumTestConfig.class);
 			fail();
 		} catch(RuntimeException e) {
 			System.out.println("Expected RuntimeException caused by IllegalArgumentException: "+e.getMessage());
 			assertEquals(IllegalArgumentException.class,  e.getCause().getClass() );
 		}
+	}
+	
+	@Test
+	public void testMap() {
+		Map<String, String> baseMap = loadResourceToMap(SAMPLE_LIST_PROPERTIES);
+		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+
+		MapAndAbstractionConfig conf = target.loadConfig(MapAndAbstractionConfig.class);
+		assertNotNull(conf.getFruitList());
+		System.out.println("list1 : "+conf.getFruitList());
+		assertEquals(3, conf.getFruitList().size());
+		assertEquals("apple", conf.getFruitList().get(0));
+		assertEquals("orange", conf.getFruitList().get(1));
+		assertEquals("mango", conf.getFruitList().get(2));
+
+		Map<Long, String> actualMap = conf.getFruitsMap();
+		assertNotNull(actualMap);
+		System.out.println("map : "+ actualMap);
+		assertEquals(3, actualMap.size());
+		assertEquals("apple", actualMap.get(1L));
+		assertEquals("orange", actualMap.get(2L));
+		assertEquals("mango", actualMap.get(3L));
+
+		SortedMap<String, Integer> numbersMap = conf.getMagicNumbers();
+		assertEquals(2, numbersMap.size());
+		System.out.println("sortedMap : "+numbersMap);
+		assertTrue(numbersMap.containsKey("first"));
+		assertTrue(numbersMap.containsKey("last"));
+		assertEquals(Integer.valueOf(15), numbersMap.get("first"));
+		assertEquals(Integer.valueOf(20), numbersMap.get("last"));
+
 	}
 }

@@ -1,6 +1,5 @@
 package com.github.hayarobi.simple_config.load;
 
-import com.github.hayarobi.simple_config.tree.TreeNode;
 
 public class EnumValueExtractor<T extends Enum<T>> implements PropValueExtractor<T> {
 	private Class<T> enumClass;
@@ -13,8 +12,8 @@ public class EnumValueExtractor<T extends Enum<T>> implements PropValueExtractor
 	}
 
 	@Override
-	public T extractValue(TreeNode node) {
-		String str = node.getValueAsString();
+	public T extractValue(RawConfig node, String propertyName) {
+		String str = node.getPropertyStringValue(propertyName);
 		if( caseSensitive ) {
 			T enumValue = (T)Enum.valueOf(enumClass, str);
 			return enumValue;

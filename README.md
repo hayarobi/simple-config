@@ -69,9 +69,18 @@ class SampleConfig
 // ...
 ```
 
+## Using Collection
+Collection is supported. see Korean manual if you can read Korean.
+
+## Using Map
+Map is also supported. 
+
+
 # Supported Data Types
 1. all primitive types and wrapping classes of them. 
 2. String
 3. java.util.Date
-4. concrete class which implements Collection interface, and having default public constructor.
 5. enum types
+4. Class which implements Collection interface, concrete class having default public constructor or well known abstract class or interface such as List, Set or SortedSet.
+5. Map, SortedMap or other concrete implementation of Map having default public constructor.
+ 

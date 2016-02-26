@@ -19,11 +19,12 @@ public class PropertiesReader implements SourceReader {
 	 * @see com.github.hayarobi.simple_config.load.SourceReader#read(java.io.InputStream)
 	 */
 	@Override
-	public Map<String, String> read(InputStream inputStream) throws IOException {
+	public RawConfig read(InputStream inputStream) throws IOException {
 		Properties props = new Properties();
 		props.load(inputStream);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		HashMap<String, String> map = new HashMap<String, String>((Map)props);
-		return map;
+		return new PropertiesRawConfig("", map);
 	}
 
 }

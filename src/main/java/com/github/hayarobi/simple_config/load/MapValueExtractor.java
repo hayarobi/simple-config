@@ -1,29 +1,27 @@
 package com.github.hayarobi.simple_config.load;
 
-import java.util.List;
 import java.util.Map;
-
-import com.github.hayarobi.simple_config.tree.TreeNode;
+import java.util.Map.Entry;
 
 class MapValueExtractor<K, V> implements PropValueExtractor<Map<K, V>> {
 	private Map<K, V> mapObject;
 	private ValueParser<K> keyParser;
-	private PropValueExtractor<V> elementValueExtractor;
+	private ValueParser<V> elementValueParser;
 	
 	public MapValueExtractor(Map<K, V> mapObject, ValueParser<K> keyParser, 
-			PropValueExtractor<V> valueExtractor) {
+			ValueParser<V> valueParser) {
 		super();
 		this.mapObject = mapObject;
 		this.keyParser = keyParser;
-		this.elementValueExtractor = valueExtractor;
+		this.elementValueParser = valueParser;
 	}
 
 	@Override
-	public Map<K, V> extractValue(TreeNode node) {
-		List<TreeNode> children = node.getChildren();
-		for (TreeNode child : children) {
-			mapObject.put(keyParser.parse(child.getName()),
-					elementValueExtractor.extractValue(child));
+	public Map<K, V> extractValue(RawConfig node, String propertyName) {
+		Map<String, String> children = node.getPropertyMapValue(propertyName);
+		for (Entry<String, String> entry : children.entrySet() ) {
+			mapObject.put(keyParser.parse(entry.getKey()),
+					elementValueParser.parse(entry.getValue()));
 		}
 		return mapObject;
 	}

@@ -22,17 +22,17 @@ import com.github.hayarobi.simple_config.annotation.Config;
  */
 public class ConfigLoader {
 	private static final String UNASSIGNED_PLACEHOLDER = "[unassigned]";
-	private static final char PROP_SEPARATOR = '.';
 
 	private Logger log = LoggerFactory.getLogger(ConfigLoader.class);
 	
-	private Map<String, String> props = null;
-	private ValueParserMap parserMap = new ValueParserMap();
+	private RawConfig rootConfig = null;
+	private ValueExtractorManager vem = null;
 	private final String elementSeparator = ",";
 	private final ConfProperty defaultProperty;
 	
-	public ConfigLoader(Map<String, String> properties) {
-		this.props = new HashMap<String, String>(properties);
+	public ConfigLoader(RawConfig rootConfig, ValueExtractorManager valueExtractorManager) {
+		this.rootConfig = rootConfig;
+		this.vem = valueExtractorManager;
 		this.defaultProperty = getDefaultConfPropertyAnnotation();
 	}
 
@@ -72,19 +72,79 @@ public class ConfigLoader {
 			throw new IllegalArgumentException("The class " + clazz.getName()
 					+ " is not config class.");
 		}
-		// 현재는 기본 생성자가 있는 경우만 처리 가능하다.
-		T configObject = createConfigObject(clazz);
-
-		// 1. prefix를 찾는다
+		// 1. rawConfig를 찾는다. 
 		String prefix = null;
 		if (UNASSIGNED_PLACEHOLDER.equals(groupAnnotation.value())) {
 			prefix = clazz.getCanonicalName();
 		} else {
 			prefix = groupAnnotation.value();
 		}
+		RawConfig rawConfig = rootConfig.findSubConfig(prefix);
+
+		// 현재는 기본 생성자가 있는 경우만 처리 가능하다.
+		T configObject = createConfigObject(clazz, rawConfig);
+//
+//
+//		for (Field field : clazz.getDeclaredFields()) {
+//			String propName = prefix + PROP_SEPARATOR;
+//			if( null != field.getAnnotation(ConfIgnore.class) ) {
+//				if( log.isTraceEnabled() ) {
+//					log.trace("field {}#{} is ignored by @ConfIgnored annotation.", clazz.getSimpleName(), field.getName());
+//				}
+//				continue;
+//			}
+//			ConfProperty propAnnotation = field.getAnnotation(ConfProperty.class);
+//			if (propAnnotation == null ) {
+//				propAnnotation = this.defaultProperty;
+//				if( log.isTraceEnabled() ) {
+//					log.trace("field {}#{} has no @ConfProperty annotation, so default setting is applied.", clazz.getSimpleName(), field.getName());
+//				}
+//			}
+//			if( UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
+//				propName += field.getName();
+//			} else {
+//				propName += propAnnotation.value();
+//			}
+//			if( log.isTraceEnabled() ) {
+//				log.trace("finding config value of field {}#{} by property name {}.", clazz.getSimpleName(), field.getName()
+//						, propName);
+//			}
+//
+//			// abstract클래스나 인터페이스는 아직 허용하지 않음
+//			Class<?> fieldType = field.getType();
+//			if(   !fieldType.isPrimitive() &&
+//					( Modifier.isInterface(fieldType.getModifiers()) || Modifier.isAbstract(fieldType.getModifiers()) ) 
+//			) {
+//				throw new RuntimeException("field "+field.getName()+" is abstract class or interface, and is not supported yet.");
+//			}
+//			
+//			String value = props.get(propName);
+//			if (null != value) {
+//				if( log.isTraceEnabled() ) {
+//					log.trace("Found config value of field {}#{}: {}.", clazz.getSimpleName(), field.getName(), value);
+//				}
+//				if( Collection.class.isAssignableFrom(fieldType) ) {
+//					putCollectionValueTo(configObject, propAnnotation, field, value);
+//				} else {
+//					putValueTo(configObject, propAnnotation, field, value);
+//				}
+//			} else if( propAnnotation.required() ) {
+//				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");
+//			}
+//		}
+
+		return configObject;
+
+	}
+
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	private <T, ET> T createConfigObject(Class<T> clazz, RawConfig rawConfig) {
+		T configObject = createEmptyObject(clazz);
 
 		for (Field field : clazz.getDeclaredFields()) {
-			String propName = prefix + PROP_SEPARATOR;
 			if( null != field.getAnnotation(ConfIgnore.class) ) {
 				if( log.isTraceEnabled() ) {
 					log.trace("field {}#{} is ignored by @ConfIgnored annotation.", clazz.getSimpleName(), field.getName());
@@ -98,48 +158,13 @@ public class ConfigLoader {
 					log.trace("field {}#{} has no @ConfProperty annotation, so default setting is applied.", clazz.getSimpleName(), field.getName());
 				}
 			}
-			if( UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
-				propName += field.getName();
-			} else {
-				propName += propAnnotation.value();
-			}
-			if( log.isTraceEnabled() ) {
-				log.trace("finding config value of field {}#{} by property name {}.", clazz.getSimpleName(), field.getName()
-						, propName);
-			}
-
-			// abstract클래스나 인터페이스는 아직 허용하지 않음
-			Class<?> fieldType = field.getType();
-			if(   !fieldType.isPrimitive() &&
-					( Modifier.isInterface(fieldType.getModifiers()) || Modifier.isAbstract(fieldType.getModifiers()) ) 
-			) {
-				throw new RuntimeException("field "+field.getName()+" is abstract class or interface, and is not supported yet.");
-			}
-			
-			String value = props.get(propName);
-			if (null != value) {
-				if( log.isTraceEnabled() ) {
-					log.trace("Found config value of field {}#{}: {}.", clazz.getSimpleName(), field.getName(), value);
-				}
-				if( Collection.class.isAssignableFrom(fieldType) ) {
-					putCollectionValueTo(configObject, propAnnotation, field, value);
-				} else {
-					putValueTo(configObject, propAnnotation, field, value);
-				}
-			} else if( propAnnotation.required() ) {
-				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");
-			}
+			injectValue(rawConfig, configObject, propAnnotation, field);
 		}
 
 		return configObject;
-
 	}
-
-	/**
-	 * @param clazz
-	 * @return
-	 */
-	protected <T> T createConfigObject(Class<T> clazz) {
+	
+	private <T> T createEmptyObject(Class<T> clazz) {
 		T configObject = null;
 		try {
 			configObject = clazz.newInstance();
@@ -160,17 +185,19 @@ public class ConfigLoader {
 	 * @param field
 	 * @param value
 	 */
-	private void putValueTo(Object configObject, ConfProperty propAnnotation, Field field, String value) {
-		ValueParser<?> parser= null;
-		Class<?> fieldType = field.getType();
-		
-		parser = selectParser(fieldType, propAnnotation);
-		if( null == parser ) {
-			throw new IllegalArgumentException("not supported field type "+fieldType.getName());
-		}
+	private <VT> void injectValue(RawConfig rawConfig, Object configObject, ConfProperty propAnnotation, Field field) {
+		String propName = selectPropertyName(field, propAnnotation);
 		try {
+			PropValueExtractor<VT> valueExtractor = vem.getExtractor(field, propAnnotation);
+			VT value = valueExtractor.extractValue(rawConfig, propName);
 			field.setAccessible(true);
-			field.set(configObject, parser.parse(value));
+			field.set(configObject, value);
+		} catch(PropertyNotFoundException e) {
+			if( propAnnotation.required() ) {
+				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");
+			} else {
+				// leave this field, to remain default value.
+			}
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
 		} catch (IllegalAccessException e) {
@@ -179,63 +206,23 @@ public class ConfigLoader {
 			field.setAccessible(false);
 		}
 	}
-
 
 	/**
-	 * 
-	 * @param fieldType
-	 * @param caseSensitive FIXME: 이 파라메터가 존재하는 방식이 안 이쁘다.
+	 * @param field
+	 * @param propAnnotation
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private ValueParser<?> selectParser(Class<?> fieldType, ConfProperty propAnnotation) {
-		ValueParser<?> parser;
-		if( fieldType.isPrimitive() ) {
-			parser = parserMap.getPrimitive(fieldType);
-		} else if( fieldType.isEnum() ) {
-			parser = new EnumParser(fieldType, propAnnotation.caseSensitive());
+	protected String selectPropertyName(Field field, ConfProperty propAnnotation) {
+		String propName;
+		if( UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
+			propName = field.getName();
 		} else {
-			parser = parserMap.get(fieldType);					
+			propName = propAnnotation.value();
 		}
-		return parser;
+		if( log.isTraceEnabled() ) {
+			log.trace("finding config value of field {} by property name {}.", field.getName(), propName);
+		}
+		return propName;
 	}
-	
-	private void putCollectionValueTo(Object configObject, ConfProperty propAnnotation, Field field, String value) {
-		Class<?> collectionType = field.getType();
-		ParameterizedType genericType = (ParameterizedType)field.getGenericType();
-		Class<?> elementType = (Class<?>)genericType.getActualTypeArguments()[0];
-		// collection에는 primitive타입이 안 들어간다.
-		ValueParser<?> parser= selectParser(elementType, propAnnotation);
-		if( null == parser ) {
-			throw new IllegalArgumentException("not supported collection element type "+elementType.getName());
-		}
-		String[] splitted = value.split(this.elementSeparator);
-
-		try {
-			Collection<?> collectionObject = createAndSetupCollection(collectionType, elementType, parser, splitted);
-			field.setAccessible(true);
-			field.set(configObject, collectionObject);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
-		} finally {
-			field.setAccessible(false);
-		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> Collection<T> createAndSetupCollection(Class<?> collectionType,
-			Class<T> elementType, ValueParser<?> parser, String[] splitted) throws InstantiationException, IllegalAccessException {
-		Collection<T> collectionObject = (Collection<T>)collectionType.newInstance();
-		for (String string : splitted) {
-			collectionObject.add((T)parser.parse(string.trim()));
-		}
-		return collectionObject;
-	}
-
 }
 

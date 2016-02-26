@@ -1,8 +1,7 @@
 package com.github.hayarobi.simple_config.load;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ObjectInputStream.GetField;
 import java.lang.annotation.Annotation;
@@ -45,41 +44,42 @@ public class ValueExtractorManagerTest {
 	@Test
 	public final void testGetExtractor() throws NoSuchFieldException, SecurityException {
 		ValueExtractorManager target = new ValueExtractorManager();
-		TreeNode mockNode = mock(TreeNode.class);
-		when(mockNode.getChildren()).thenReturn(new ArrayList<TreeNode>());
-		when(mockNode.getName()).thenReturn("sample");
+		RawConfig mockConfig = mock(RawConfig.class);
+		when(mockConfig.getPropertyListValue(anyString())).thenReturn(new ArrayList<String>());
+		when(mockConfig.getPropertyMapValue(anyString())).thenReturn(new HashMap<String, String>());
+		when(mockConfig.getName()).thenReturn("sample");
 		
 		Field field = TestClass.class.getField("primitive1");
-		when(mockNode.getValueAsString()).thenReturn("22");
+		when(mockConfig.getPropertyStringValue(anyString())).thenReturn("22");
 		PropValueExtractor<?> actual = target.getExtractor(field, defaultProp );
 		assertEquals(SingleStringExtractor.class, actual.getClass());
-		assertEquals(Integer.valueOf(22), actual.extractValue(mockNode));
+		assertEquals(Integer.valueOf(22), actual.extractValue(mockConfig, "primitive1"));
 		
 		field = TestClass.class.getField("string1");
 		actual = target.getExtractor(field, defaultProp );
 		assertEquals(SingleStringExtractor.class, actual.getClass());
-		assertEquals("22", actual.extractValue(mockNode));
+		assertEquals("22", actual.extractValue(mockConfig, "string1"));
 
 
 		field = TestClass.class.getField("enumList");
 		actual = target.getExtractor(field, defaultProp );
 		assertEquals(CollectionValueExtractor.class, actual.getClass());
-		assertEquals(ArrayList.class, actual.extractValue(mockNode).getClass());
+		assertEquals(ArrayList.class, actual.extractValue(mockConfig, "enumList").getClass());
 
 		field = TestClass.class.getField("enumSet");
 		actual = target.getExtractor(field, defaultProp );
 		assertEquals(CollectionValueExtractor.class, actual.getClass());
-		assertEquals(TreeSet.class, actual.extractValue(mockNode).getClass());
+		assertEquals(TreeSet.class, actual.extractValue(mockConfig, "enumSet").getClass());
 
 		field = TestClass.class.getField("enumMap");
 		actual = target.getExtractor(field, defaultProp );
 		assertEquals(MapValueExtractor.class, actual.getClass());
-		assertEquals(HashMap.class, actual.extractValue(mockNode).getClass());
+		assertEquals(HashMap.class, actual.extractValue(mockConfig, "enumMap").getClass());
 
 		field = TestClass.class.getField("sortedMap");
 		actual = target.getExtractor(field, defaultProp );
 		assertEquals(MapValueExtractor.class, actual.getClass());
-		assertEquals(TreeMap.class, actual.extractValue(mockNode).getClass());
+		assertEquals(TreeMap.class, actual.extractValue(mockConfig, "sortedMap").getClass());
 
 
 	}

@@ -11,6 +11,7 @@ public interface TreeNode {
 	public String getName();
 	public String getFullName();
 	public boolean isLeaf();
+	public TreeNode findChild(String relativePath);
 	public String getValueAsString() throws IllegalCallException;
 	public List<TreeNode> getChildren() throws IllegalCallException;
 	

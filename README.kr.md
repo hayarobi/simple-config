@@ -82,7 +82,7 @@ conf.data.user=tester
 @Config("data")
 class SampleConfig
 	@ConfProperty(value="fruits", separator=";")
-	private ArrayList<String> fruitList;
+	private List<String> fruitList;
 
   // enum literal should be case sensitive by default
 	@ConfProperty(required=true, caseSensitive=false) 
@@ -102,11 +102,27 @@ simple-config는 설정 타입으로 enum을 지원한다.
 자바 스펙에서는 enum 항목이 대소문자를 구분한다. 만일 java enum이 대소문자만 다른 여러 항목을 가지고 있는데 이 속성이 false인 경우 설정객체에는 모두 하나의 값으로만 매핑이 될 것이다.
 
 ## Collection 사용하기
-Collection 인터페이스를 구현한 클래스를 지원한다. public 스코프의 기본 생성자(파라메터가 없는 생성자)를 가지고 있는 클래스만 지원한다. 그리고 현재까지는 abstract클래스를 지원하지 않는다. 한 줄로 이어진 문자의 값 구분은 기본적으로 쉼표(,)로 구분한 뒤 앞뒤공백을 제거한 값을 할당한다. 구분자는 어노테이션을 이용해 다른 구분자를 사용할 수 있다.    
+Collection 인터페이스를 구현한 클래스를 지원한다. public 스코프의 기본 생성자(파라메터가 없는 생성자)를 가지고 있는 클래스만 지원한다. List, Set등 몇몇 널리 알려진 추상 클래스는 ArrayList와 HashSet처럼 각각 적절한 콘크리트 클래스로 대체되서 값을 할당한다. 컬렉션의 컬렉션 혹은 맵의 컬렉션은 지원하지 않는다. 즉 컬렉션의 멤버는 Integer, String, Date같은 단일값 형태의 클래스나 enum타입만 가능하다.  
+프로퍼티파일에서 값을 설정하는 방법이 0.2와 이전 버전이 다르다. 
+v0.2부터는 속성 항목 뒤에 추가 구분용 속성을 부여한 속성값을 모두 읽어서 그 값들을 컬렉션에 넣는다. 구분 속성에 구두점(.)은 허용하지 않는다. 입력순서는 문자열 비교 순서대로 들어간다. 
+fruits가 List<String> 타입으로 지정되어 있을 경우 
+```
+list.sample.fruits.1=apple
+list.sample.fruits.9=orange
+list.sample.fruits.10=grape
+```
+문자열 형태의 비교로 인해 1,10,9 순서인 apple, grape, orange로 저장된다. 
+
+v0.1에서는 한 줄로 이어진 문자의 값 구분은 기본적으로 쉼표(,)로 구분한 뒤 앞뒤공백을 제거한 값을 할당한다. 구분자는 어노테이션을 이용해 다른 구분자를 사용할 수 있다.    
+
+## Map 사용하기
+v0.2부터 Map을 지원한다. 프로퍼티 파일에서 값을 설정하는 방법은 컬렉션과 큰 차이가 나지 않는다. 이름쪽의 마지막 구분속성값이 key가 된다. 위 리스트 예제를 그대로 사용할 경우 map에는 1=apple, 9=orange, 10=grape 세 개의 엔트리가 저장이 될 것이다. 추상 컬렉션과 마찬가지로 Map과 SortedMap은 각각 HashMap과 TreeMap으로 대체되서 객체가 만들어진다.
+
 
 # 사용 가능한 JAVA 타입
 1. primitive type과 그것의 래핑클래스 전부다. 예) int-Integer , float-Float 
 2. String
 3. java.util.Date 
-4. Collection 인터페이스를 구현한 클래스. (상세 사용법은 위쪽 참조)
-5. enum형
+4. enum형
+5. Collection 인터페이스를 구현한 클래스. (상세 사용법은 위쪽 참조)
+6. Map 클래스

@@ -73,9 +73,9 @@ public class ValueExtractorManager {
 		extractor = tryCreateCollectionExtractor(field, type, property);
 		if( extractor != null) {
 			return extractor;
+		} else {
+			throw new IllegalArgumentException("Not supported field type "+type.getName());
 		}
-		return extractor;
-
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -113,9 +113,9 @@ public class ValueExtractorManager {
 		}
 		ParameterizedType genericType = (ParameterizedType)field.getGenericType();
 		Class<?> elementType = (Class<?>)genericType.getActualTypeArguments()[0];
-		PropValueExtractor<?> elementValueExtractor = findUnitTypeExtractor(elementType, property);
+		ValueParser<?> elementValueExtractor = findValueParser(elementType, property.caseSensitive());
 		if( null == elementValueExtractor ) {
-			throw new IllegalArgumentException("Not supported collection element type. "+type.getName());
+			throw new IllegalArgumentException("Not supported collection element type "+type.getName());
 		}
 		Collection<?> collectionObject = null;
 		try {
@@ -151,11 +151,11 @@ public class ValueExtractorManager {
 		ParameterizedType genericType = (ParameterizedType)field.getGenericType();
 		Class<?> keyType = (Class<?>)genericType.getActualTypeArguments()[0];
 		Class<?> valueType = (Class<?>)genericType.getActualTypeArguments()[1];
-		ValueParser<?> keyParser = findParser(keyType);
+		ValueParser<?> keyParser = findValueParser(keyType, property.caseSensitive());
 		if( null == keyParser ) {
 			throw new IllegalArgumentException("Not supported map key type. "+keyType.getName());
 		}
-		PropValueExtractor<?> elementValueExtractor = findUnitTypeExtractor(valueType, property);
+		ValueParser<?> elementValueExtractor = findValueParser(valueType, property.caseSensitive());
 		if( null == elementValueExtractor ) {
 			throw new IllegalArgumentException("Not supported map value type. "+valueType.getName());
 		}
@@ -173,18 +173,7 @@ public class ValueExtractorManager {
 
 	}
 
-	/**
-	 * @param keyType
-	 * @return
-	 */
-	protected ValueParser<?> findParser(Class<?> keyType) {
-		ValueParser<?> parser = singleValueParserMap.get(keyType);
-		if( parser == null && keyType.isEnum() ) {
-			parser = new EnumParser(keyType, true);			
-		}
-		return parser;
-	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected <T> PropValueExtractor<T> findUnitTypeExtractor(Class<T> type, ConfProperty property) {
 		// 일단은 extractorMap에 있는 것을 최우선으로 사용한다.
@@ -193,20 +182,26 @@ public class ValueExtractorManager {
 			return extractor;
 		}
 		
-		// Enum이면 enum extractor를 반환한다.
-		if( type.isEnum() ) {
-			return new EnumValueExtractor(type, property.caseSensitive());
-		}
-		
-		ValueParser<?> singleValueParser = null;
-		if( type.isPrimitive() ) {
-			singleValueParser = singleValueParserMap.getPrimitive(type);
-		} else {
-			singleValueParser = singleValueParserMap.get(type);			
-		}
+		ValueParser<?> singleValueParser = findValueParser(type, property.caseSensitive());
 		if( null == singleValueParser ) {
 			return null;
+		}		return (SingleStringExtractor<T>)new SingleStringExtractor(singleValueParser);
+	}
+
+	/**
+	 * @param destType
+	 * @return
+	 */
+	protected <T> ValueParser<?> findValueParser(Class<T> destType, boolean enumCaseSensitive) {
+		ValueParser<?> singleValueParser = null;
+		if( destType.isPrimitive() ) {
+			singleValueParser = singleValueParserMap.getPrimitive(destType);
+		} else {
+			singleValueParser = singleValueParserMap.get(destType);			
 		}
-		return (SingleStringExtractor<T>)new SingleStringExtractor(singleValueParser);
+		if( singleValueParser == null && destType.isEnum() ) {
+			singleValueParser = new EnumParser(destType, enumCaseSensitive);
+		}		
+		return singleValueParser;
 	}
 }
