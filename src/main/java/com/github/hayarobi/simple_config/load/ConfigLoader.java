@@ -83,55 +83,6 @@ public class ConfigLoader {
 
 		// 현재는 기본 생성자가 있는 경우만 처리 가능하다.
 		T configObject = createConfigObject(clazz, rawConfig);
-//
-//
-//		for (Field field : clazz.getDeclaredFields()) {
-//			String propName = prefix + PROP_SEPARATOR;
-//			if( null != field.getAnnotation(ConfIgnore.class) ) {
-//				if( log.isTraceEnabled() ) {
-//					log.trace("field {}#{} is ignored by @ConfIgnored annotation.", clazz.getSimpleName(), field.getName());
-//				}
-//				continue;
-//			}
-//			ConfProperty propAnnotation = field.getAnnotation(ConfProperty.class);
-//			if (propAnnotation == null ) {
-//				propAnnotation = this.defaultProperty;
-//				if( log.isTraceEnabled() ) {
-//					log.trace("field {}#{} has no @ConfProperty annotation, so default setting is applied.", clazz.getSimpleName(), field.getName());
-//				}
-//			}
-//			if( UNASSIGNED_PLACEHOLDER.equals(propAnnotation.value())) {
-//				propName += field.getName();
-//			} else {
-//				propName += propAnnotation.value();
-//			}
-//			if( log.isTraceEnabled() ) {
-//				log.trace("finding config value of field {}#{} by property name {}.", clazz.getSimpleName(), field.getName()
-//						, propName);
-//			}
-//
-//			// abstract클래스나 인터페이스는 아직 허용하지 않음
-//			Class<?> fieldType = field.getType();
-//			if(   !fieldType.isPrimitive() &&
-//					( Modifier.isInterface(fieldType.getModifiers()) || Modifier.isAbstract(fieldType.getModifiers()) ) 
-//			) {
-//				throw new RuntimeException("field "+field.getName()+" is abstract class or interface, and is not supported yet.");
-//			}
-//			
-//			String value = props.get(propName);
-//			if (null != value) {
-//				if( log.isTraceEnabled() ) {
-//					log.trace("Found config value of field {}#{}: {}.", clazz.getSimpleName(), field.getName(), value);
-//				}
-//				if( Collection.class.isAssignableFrom(fieldType) ) {
-//					putCollectionValueTo(configObject, propAnnotation, field, value);
-//				} else {
-//					putValueTo(configObject, propAnnotation, field, value);
-//				}
-//			} else if( propAnnotation.required() ) {
-//				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");
-//			}
-//		}
 
 		return configObject;
 
@@ -149,6 +100,10 @@ public class ConfigLoader {
 				if( log.isTraceEnabled() ) {
 					log.trace("field {}#{} is ignored by @ConfIgnored annotation.", clazz.getSimpleName(), field.getName());
 				}
+				continue;
+			}
+			// TODO: 좀 더 범용적인 형태를 반영할 수 있도록 바꾸어보자.
+			if( field.getName().startsWith("$") ) {
 				continue;
 			}
 			ConfProperty propAnnotation = field.getAnnotation(ConfProperty.class);
@@ -192,6 +147,9 @@ public class ConfigLoader {
 			VT value = valueExtractor.extractValue(rawConfig, propName);
 			field.setAccessible(true);
 			field.set(configObject, value);
+			if( log.isTraceEnabled() ) {
+				log.trace("Set config value {} to field {}", value, field.getName());
+			}
 		} catch(PropertyNotFoundException e) {
 			if( propAnnotation.required() ) {
 				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");

@@ -46,6 +46,35 @@ public class ConfigServiceFactoryTest {
 	}
 
 	@Test
+	public void testCraeteServiceFromResourceWithPreload() {
+		ConfigServiceFactory target = new ConfigServiceFactory();
+		
+		ConfigService actual = target.craeteServiceFromResource(SAMPLECONF_PROPERTIES, true, "com.github.hayarobi.simple_config");
+		assertNotNull(actual);
+		
+		DataConfig dconf0 = actual.getConfig(DataConfig.class);
+		assertNotNull(dconf0);
+		assertEquals("http://www.score.co.kr", dconf0.getUrl());
+		assertEquals("tester", dconf0.getUser());
+		assertEquals("p@ssw0rd", dconf0.getPass());
+		assertEquals(5, dconf0.getMaxConn());
+
+		OtherConfig sconf0 = actual.getConfig(OtherConfig.class);
+		assertNotNull(sconf0);
+		assertEquals("http://localhost:6800/", sconf0.getUrl());
+		assertEquals("/home/search/tmp/result", sconf0.getResultPath());
+		assertEquals(30, sconf0.getNumberOfArticles());
+		assertEquals(15, sconf0.getMaxConn());
+		assertEquals(99.9, sconf0.getEra(), 0.00001);
+
+		try {
+			target.craeteServiceFromResource("nothing.properties");
+			fail();
+		} catch(IllegalArgumentException expectedEx) {
+			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.
+		}
+	}
+	@Test
 	public void testCraeteServiceFromFile() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
 		ConfigService expected = target.craeteServiceFromResource(SAMPLECONF_PROPERTIES);

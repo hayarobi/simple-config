@@ -13,8 +13,9 @@ import java.io.InputStream;
  */
 public interface SourceReader {
 	/**
-	 * @param inputStream
-	 * @return
+	 * 바이트스트림을 읽어서 설정 데이터 트리구조를 반환한다. xml처럼 root는 하나만 있는 구조이다.
+	 * @param inputStream 바이트 스트림
+	 * @return {@link RawConfig} 인스턴스.
 	 * @throws IOException inputStream에서 읽기를 실패할 경우.
 	 */
 	public RawConfig read(InputStream inputStream) throws IOException;

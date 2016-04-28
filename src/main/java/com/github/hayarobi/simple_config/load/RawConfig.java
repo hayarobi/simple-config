@@ -10,10 +10,11 @@ import java.util.Map;
  */
 public interface RawConfig {
 	public String getName();
+	
 	/**
-	 * 해당 프로퍼티 이름을 가진 설정값으로 구성된 {@link RawConfig} 객체를 반환한다. 만약 설정 소스에 관련된 게 하나도 없으면 내용이 비어있는 객체를 반환한다.
-	 * 즉 null을 반환하는 일이 없다.
-	 * @param propertyName
+	 * 해당 프로퍼티 이름을 가진 설정값으로 구성된 {@link RawConfig} 객체를 반환한다. 만약 설정 소스에 
+	 * 관련된 게 하나도 없으면 내용이 비어있는 객체를 반환한다. 즉 null을 반환하는 일이 없다.
+	 * @param propertyName 찾으려는 프로퍼티 이름.
 	 * @return instance of {@link RawConfig} 
 	 */
 	public RawConfig findSubConfig(String propertyName);

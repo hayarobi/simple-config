@@ -116,4 +116,12 @@ public class PropertiesRawConfig implements RawConfig {
 		return valueMap;
 	}
 
+	@Override
+	public String toString() {
+		if( null != childProperties ) {
+			return "RawConfig "+name+":\n"+childProperties.toString();
+		} else {
+			return "RawConfig "+name+": nothing";			
+		}
+	}
 }
