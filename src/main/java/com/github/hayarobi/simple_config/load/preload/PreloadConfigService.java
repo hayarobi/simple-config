@@ -17,22 +17,17 @@ import com.github.hayarobi.simple_config.load.ConfigLoader;
 public class PreloadConfigService implements ConfigService {
 	private Logger log = LoggerFactory.getLogger(PreloadConfigService.class);
 	
-	private ConfigLoader loader;
 	private ConcurrentHashMap<Class<Object>, Object> confMap;
 	
-	public PreloadConfigService(ConfigLoader loader, String[] scanPackages) {
-		this.loader = loader;
+	public PreloadConfigService() {
 		this.confMap = new ConcurrentHashMap<Class<Object>, Object>();
-		
-		init(scanPackages);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void init(String[] scanPackages) {
+	public void initWith(ConfigLoader loader, ConfigClassScanner confScanner, String[] scanPackages) {
 		if( log.isDebugEnabled() ) {
 			log.debug("Preloading config objects");
 		}
-		ConfigClassScanner confScanner = new ConfigClassScanner();
 		for (String packageName : scanPackages) {
 			if( packageName.isEmpty() ) {
 				continue;

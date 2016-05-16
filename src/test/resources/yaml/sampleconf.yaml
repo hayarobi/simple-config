@@ -1,0 +1,37 @@
+---
+#default
+# DataConfig
+com.github.hayarobi.simple_config.sample.DataConfig:
+    url: http://www.score.co.kr
+    user: tester
+    pass: p@ssw0rd
+    maxConn: 5
+
+# ScrapyConfig
+theothers:
+    url:  http://localhost:6800/
+    result: /home/search/tmp/result
+    numatc: 30
+    maxConn: '0015'
+    era: 99.9
+
+# enum tests
+enums:
+    planet:  EARTH
+    planet2:  MerCury
+    round:  DOWN
+    lists:
+        - VENUS
+        - MARS
+        - JUPITER
+
+# list sample
+list.and.date:
+    fruits: [apple, orange, mango]
+    magicNumbers:
+        first: 0015
+        last: 020
+    fromTime: 2015-03-02 12:34:56.111+05:00
+...
+
+

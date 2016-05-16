@@ -12,8 +12,11 @@ import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.load.PropertiesReader;
 import com.github.hayarobi.simple_config.load.RawConfig;
 import com.github.hayarobi.simple_config.load.SourceReader;
+import com.github.hayarobi.simple_config.load.SourceType;
 import com.github.hayarobi.simple_config.load.ValueExtractorManager;
+import com.github.hayarobi.simple_config.load.preload.ConfigClassScanner;
 import com.github.hayarobi.simple_config.load.preload.PreloadConfigService;
+import com.github.hayarobi.simple_config.load.yaml.snakeyaml.YamlReader;
 
 /**
  * configService를 생성하기 위한 팩토리 클래스.
@@ -46,7 +49,10 @@ public class ConfigServiceFactory {
 	private ConfigService createService(boolean preload, ConfigLoader loader, String preloadPackges) {
 		if( preload ) {
 			String[] packagesToScan = preloadPackges.split(",");
-			return new PreloadConfigService(loader, packagesToScan);
+			ConfigClassScanner confScanner = new ConfigClassScanner();
+			PreloadConfigService service = new PreloadConfigService();
+			service.initWith(loader, confScanner, packagesToScan);
+			return service;
 		} else {
 			return new LazyConfigService(loader);
 		}
@@ -91,10 +97,24 @@ public class ConfigServiceFactory {
 		return is;
 	}
 
-	private SourceReader selectSourceReader(String resourcePath) {
-		// 확장자로부터 적절한 리더 객체를 선정.
-		// FIXME 일단은 properties리더만 있다. 
-		return new PropertiesReader();
+	private SourceReader selectSourceReader(String path) {
+		int index = path.lastIndexOf('.');
+		if( index > 0 && index < path.length() - 1 ) {
+			String extension = path.substring(index+1).toUpperCase() ;
+			try {
+			SourceType type = SourceType.valueOf(extension);
+			switch (type) {
+			case YAML:
+				return new YamlReader();
+			case PROPERTIES:
+			default:
+				return new PropertiesReader();
+			}
+			} catch(IllegalArgumentException e) {
+				
+			}
+		}
+		throw new IllegalArgumentException("Not supported source type "+path);
 	}
 
 

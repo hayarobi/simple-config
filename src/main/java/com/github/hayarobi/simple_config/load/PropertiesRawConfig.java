@@ -39,7 +39,19 @@ public class PropertiesRawConfig implements RawConfig {
 			}
 		}
 		
-		return new PropertiesRawConfig(propertyName, propsMap);
+		return new PropertiesRawConfig(makeChildName(propertyName), propsMap);
+	}
+
+	/**
+	 * @param propertyName
+	 * @return
+	 */
+	private String makeChildName(String propertyName) {
+		if( name.isEmpty() ) {
+			return propertyName;
+		} else {
+			return name+pathSeparatorChar+propertyName;
+		}
 	}
 
 	@Override

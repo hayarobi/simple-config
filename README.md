@@ -1,6 +1,8 @@
 # simple-config
 Annotation based simpl configuration helper libbrary
 
+As of version 0.4, it support properties and yaml file as config source file.
+
 Note: It's too hard work, for me, to make English manual. Translation from README.kr.md to this file is always welcome.
 
 # Simple usage

@@ -76,7 +76,7 @@ class StringParser implements ValueParser<String> {
 class ShortParser implements ValueParser<Short> {
 	public Short parse(String str) {
 		try {
-			return Short.decode(str);
+			return Short.parseShort(str, 10);
 		} catch (NumberFormatException ex) {
 			throw new IllegalArgumentException(ex);
 		}
@@ -86,7 +86,7 @@ class ShortParser implements ValueParser<Short> {
 class IntegerParser implements ValueParser<Integer> {
 	public Integer parse(String str) {
 		try {
-			return Integer.decode(str);
+			return Integer.parseInt(str, 10);
 		} catch (NumberFormatException ex) {
 			throw new IllegalArgumentException(ex);
 		}
@@ -96,7 +96,7 @@ class IntegerParser implements ValueParser<Integer> {
 class LongParser implements ValueParser<Long> {
 	public Long parse(String str) {
 		try {
-			return Long.decode(str);
+			return Long.parseLong(str, 10);
 		} catch (NumberFormatException ex) {
 			throw new IllegalArgumentException(ex);
 		}

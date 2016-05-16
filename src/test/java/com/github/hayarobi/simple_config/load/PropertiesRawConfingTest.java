@@ -40,9 +40,23 @@ public class PropertiesRawConfingTest {
 	@Test
 	public final void testFindSubConfig() {
 		PropertiesRawConfig target = new PropertiesRawConfig("", sampleMap);
-		RawConfig actual = target.findSubConfig("list.and.date");
+		RawConfig actual = null;
+
+		actual = target.findSubConfig("list.and");
 		assertNotNull(actual);
+		assertEquals("list.and", actual.getName());
 		
+		RawConfig subActual = actual.findSubConfig("date");
+		assertNotNull(subActual);
+		assertEquals("list.and.date", subActual.getName());
+		assertNotNull(subActual.getPropertyListValue("fruits"));
+		assertNotNull(subActual.getPropertyMapValue("fruits"));
+		assertNotNull(subActual.getPropertyListValue("magicNumbers"));
+		assertNotNull(subActual.getPropertyMapValue("magicNumbers"));
+		assertNotNull(subActual.getPropertyStringValue("fromTime"));
+		
+		actual = target.findSubConfig("list.and.date");
+		assertNotNull(actual);
 		assertEquals("list.and.date", actual.getName());
 		assertNotNull(actual.getPropertyListValue("fruits"));
 		assertNotNull(actual.getPropertyMapValue("fruits"));
@@ -50,8 +64,8 @@ public class PropertiesRawConfingTest {
 		assertNotNull(actual.getPropertyMapValue("magicNumbers"));
 		assertNotNull(actual.getPropertyStringValue("fromTime"));
 		
-		actual = target.findSubConfig("list.and");
-		assertNotNull(actual);
+		
+		
 		
 		actual = target.findSubConfig("NoOthers");
 		assertNotNull(actual);
