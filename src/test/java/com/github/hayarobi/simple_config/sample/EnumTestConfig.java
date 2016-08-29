@@ -3,15 +3,16 @@ package com.github.hayarobi.simple_config.sample;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
+import com.github.hayarobi.simple_config.annotation.CaseSensitive;
 import com.github.hayarobi.simple_config.annotation.Config;
+import com.github.hayarobi.simple_config.annotation.Required;
 
 @Config("enums")
 public class EnumTestConfig {
-	@ConfProperty(required=true)
+	@Required()
 	private EnumSample planet;
 
-	@ConfProperty(caseSensitive=false)
+	@CaseSensitive(false)
 	private EnumSample planet2;
 
 	private RoundingMode round = RoundingMode.HALF_UP;

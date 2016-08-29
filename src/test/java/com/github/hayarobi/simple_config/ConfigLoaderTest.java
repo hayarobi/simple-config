@@ -21,6 +21,7 @@ import com.github.hayarobi.simple_config.load.ValueExtractorManager;
 import com.github.hayarobi.simple_config.sample.DataConfig;
 import com.github.hayarobi.simple_config.sample.EnumSample;
 import com.github.hayarobi.simple_config.sample.EnumTestConfig;
+import com.github.hayarobi.simple_config.sample.IMRequiredConf;
 import com.github.hayarobi.simple_config.sample.ListAndDateConfig;
 import com.github.hayarobi.simple_config.sample.MapAndAbstractionConfig;
 import com.github.hayarobi.simple_config.sample.OtherConfig;
@@ -234,5 +235,24 @@ public class ConfigLoaderTest {
 		assertEquals(Integer.valueOf(15), numbersMap.get("first"));
 		assertEquals(Integer.valueOf(20), numbersMap.get("last"));
 
+	}
+	
+	@Test
+	public void testRequiredPropConfClass() {
+		Map<String, String> baseMap = new HashMap<String, String>();
+		baseMap.put("IMRequiredConf.trueAnnoInt", "4");
+		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		
+		try {
+			target.loadConfig(IMRequiredConf.class);
+			fail();
+		} catch(RuntimeException expectedEx) {
+			System.out.println("Expected exception : "+expectedEx.getMessage());
+		}
+
+		baseMap.put("IMRequiredConf.noAnnoInt", "2");
+		target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		IMRequiredConf actual = target.loadConfig(IMRequiredConf.class);
+		assertEquals(2, actual.getNoAnnoInt());
 	}
 }

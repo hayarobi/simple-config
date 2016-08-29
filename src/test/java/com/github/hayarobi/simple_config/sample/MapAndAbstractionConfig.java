@@ -1,29 +1,28 @@
 package com.github.hayarobi.simple_config.sample;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
 import com.github.hayarobi.simple_config.annotation.Config;
+import com.github.hayarobi.simple_config.annotation.Name;
 
 @Config("list.and.date")
 public class MapAndAbstractionConfig {
-	@ConfProperty("fruits")
+	@Name("fruits")
 	private List<String> fruitList;
 
-	@ConfProperty("fruits")
+	@Name("fruits")
 	private Map<Long, String> fruitsMap;
 
 	private SortedMap<String, Integer> magicNumbers;
 
-	@ConfProperty("magicNumbers")
+	@Name("magicNumbers")
 	private Set<Integer> abstractSet;
 
-	@ConfProperty("magicNumbers")
+	@Name("magicNumbers")
 	private SortedSet<Integer> sortedSet;
 
 	/**

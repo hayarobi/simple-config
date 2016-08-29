@@ -73,30 +73,30 @@ conf.data.user=tester
 
 ## 어노테이션으로 개설 설정항목에 대한 특성 변경하기
 기본적으로는 설정 클래스의 모든 필드에 대해 기본설정을 적용한다. 기본 설정이 아닌 특성을 부여하려면 @ConfProperty 어노테이션을 사용하자.
-* value : 설정항목 이름을 필드명 대신 다른 이름을 사용한다. 
-* required : 이 항목이 true이면 설정파일에서 반드시 값이 들어가 있어야한다. 아닐 경우 초기화 때 예외가 발생한다.
-* separator : 컬렉션 타입 속성만 적용됨. 컬렉션의 개별값을 구분하는 기호를 설정한다.
-* caseSensitive : enum 타입 속성만 적용됨. 이넘 항목의 값을 파싱할 때 대소문자를 구분할지 여부를 지정한다. 기본값은 true. 
+* Namee : 설정항목 이름을 필드명 대신 다른 이름을 사용한다. 
+* Required : 이 항목이 true이면 설정파일에서 반드시 값이 들어가 있어야한다. 아닐 경우 초기화 때 예외가 발생한다.
+* CaseSensitive : enum 타입 속성만 적용됨. 이넘 항목의 값을 파싱할 때 대소문자를 구분할지 여부를 지정한다. 기본값은 true. 
 
 ```java
 // ...
 @Config("data")
 class SampleConfig
-	@ConfProperty(value="fruits", separator=";")
+	@Name("fruits")
 	private List<String> fruitList;
 
   // enum literal should be case sensitive by default
-	@ConfProperty(required=true, caseSensitive=false) 
+	@Required
+	@CaseSensitive(false) 
 	private EnumSample planet;
 	
-	@ConfIgnore
+	@Ignored
 	private String ignored;
 // ...
 ```
 
 ## 특정 필드는 사용하지 않기
-@ConfIgnore 어노테이션으로 해당 필드는 사용하지 않는 것으로 처리한다.
-주의 : 설정 클래스의 멤버 필드 중에서 지원하지 않는 타입이 있을 경우 반드시 ConfIgnore처리를 해야한다. 그렇지 않으면 초기화 때 예외가 발생할 것이다.
+@Ignored 어노테이션으로 해당 필드는 사용하지 않는 것으로 처리한다.
+주의 : 설정 클래스의 멤버 필드 중에서 지원하지 않는 타입이 있을 경우 반드시 Ignored처리를 해야한다. 그렇지 않으면 초기화 때 예외가 발생할 것이다.
 
 ## enum형 사용하기
 simple-config는 설정 타입으로 enum을 지원한다.

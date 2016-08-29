@@ -18,7 +18,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
+import com.github.hayarobi.simple_config.load.ConfigLoader.PropDescription;
 
 
 /**
@@ -56,7 +56,7 @@ public class ValueExtractorManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> PropValueExtractor<T> getExtractor(Field field, ConfProperty property) throws IllegalArgumentException {
+	public <T> PropValueExtractor<T> getExtractor(Field field, PropDescription property) throws IllegalArgumentException {
 		Class<T> type = (Class<T>)field.getType();
 		// 일단은 extractorMap에 있는 것을 최우선으로 사용한다.
 		PropValueExtractor<T> extractor = findUnitTypeExtractor(type, property);
@@ -100,7 +100,7 @@ public class ValueExtractorManager {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private <T> PropValueExtractor<T> tryCreateCollectionExtractor(Field field, Class<T> type, ConfProperty property) {
+	private <T> PropValueExtractor<T> tryCreateCollectionExtractor(Field field, Class<T> type, PropDescription property) {
 		if( !Collection.class.isAssignableFrom(type) ) {
 			return null;
 		}
@@ -113,7 +113,7 @@ public class ValueExtractorManager {
 		}
 		ParameterizedType genericType = (ParameterizedType)field.getGenericType();
 		Class<?> elementType = (Class<?>)genericType.getActualTypeArguments()[0];
-		ValueParser<?> elementValueExtractor = findValueParser(elementType, property.caseSensitive());
+		ValueParser<?> elementValueExtractor = findValueParser(elementType, property.caseSensitive);
 		if( null == elementValueExtractor ) {
 			throw new IllegalArgumentException("Not supported collection element type "+type.getName());
 		}
@@ -136,7 +136,7 @@ public class ValueExtractorManager {
 	 * @param extractor
 	 * @return
 	 */
-	private <T> PropValueExtractor<T> tryCreateMapExtractor(Field field, Class<T> type, ConfProperty property) {
+	private <T> PropValueExtractor<T> tryCreateMapExtractor(Field field, Class<T> type, PropDescription property) {
 		if( !Map.class.isAssignableFrom(type) ) {
 			return null;
 		}
@@ -151,11 +151,11 @@ public class ValueExtractorManager {
 		ParameterizedType genericType = (ParameterizedType)field.getGenericType();
 		Class<?> keyType = (Class<?>)genericType.getActualTypeArguments()[0];
 		Class<?> valueType = (Class<?>)genericType.getActualTypeArguments()[1];
-		ValueParser<?> keyParser = findValueParser(keyType, property.caseSensitive());
+		ValueParser<?> keyParser = findValueParser(keyType, property.caseSensitive);
 		if( null == keyParser ) {
 			throw new IllegalArgumentException("Not supported map key type. "+keyType.getName());
 		}
-		ValueParser<?> elementValueExtractor = findValueParser(valueType, property.caseSensitive());
+		ValueParser<?> elementValueExtractor = findValueParser(valueType, property.caseSensitive);
 		if( null == elementValueExtractor ) {
 			throw new IllegalArgumentException("Not supported map value type. "+valueType.getName());
 		}
@@ -175,14 +175,14 @@ public class ValueExtractorManager {
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected <T> PropValueExtractor<T> findUnitTypeExtractor(Class<T> type, ConfProperty property) {
+	protected <T> PropValueExtractor<T> findUnitTypeExtractor(Class<T> type, PropDescription property) {
 		// 일단은 extractorMap에 있는 것을 최우선으로 사용한다.
 		PropValueExtractor<T> extractor = (PropValueExtractor<T>)extractorMap.get(type);
 		if( null != extractor ) {
 			return extractor;
 		}
 		
-		ValueParser<?> singleValueParser = findValueParser(type, property.caseSensitive());
+		ValueParser<?> singleValueParser = findValueParser(type, property.caseSensitive);
 		if( null == singleValueParser ) {
 			return null;
 		}		return (SingleStringExtractor<T>)new SingleStringExtractor(singleValueParser);

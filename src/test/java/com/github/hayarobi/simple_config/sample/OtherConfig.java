@@ -1,16 +1,18 @@
 package com.github.hayarobi.simple_config.sample;
 
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
 import com.github.hayarobi.simple_config.annotation.Config;
+import com.github.hayarobi.simple_config.annotation.Name;
+import com.github.hayarobi.simple_config.annotation.Required;
 
 @Config("theothers")
 public class OtherConfig {
 	private String url;
 
-	@ConfProperty(value="result", required=true)
+	@Name("result")
+	@Required
 	private String resultPath;
 
-	@ConfProperty("numatc")
+	@Name("numatc")
 	private int numberOfArticles = 300;
 	private int maxConn;
 	private float era;

@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import com.github.hayarobi.simple_config.annotation.ConfIgnore;
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
+import com.github.hayarobi.simple_config.annotation.Ignored;
 import com.github.hayarobi.simple_config.annotation.Config;
+import com.github.hayarobi.simple_config.annotation.Name;
 
 @Config("list.and.date")
 public class ListAndDateConfig {
-	@ConfProperty("fruits")
+	@Name("fruits")
 	private ArrayList<String> fruitList;
 	
 	private ArrayList<String> toBeNull;
@@ -20,7 +20,7 @@ public class ListAndDateConfig {
 	
 	private Date fromTime;
 
-	@ConfIgnore
+	@Ignored
 	private List<String> ignoredField;
 
 	/**

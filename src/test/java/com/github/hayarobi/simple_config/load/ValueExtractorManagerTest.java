@@ -1,10 +1,10 @@
 package com.github.hayarobi.simple_config.load;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.io.ObjectInputStream.GetField;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +19,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.hayarobi.simple_config.annotation.ConfProperty;
 import com.github.hayarobi.simple_config.annotation.Config;
+import com.github.hayarobi.simple_config.load.ConfigLoader.PropDescription;
 import com.github.hayarobi.simple_config.sample.EnumSample;
 
 public class ValueExtractorManagerTest {
 
-	private static ConfProperty defaultProp = getDefaultConfPropertyAnnotation();
+	private static PropDescription defaultProp = getDefaultConfPropertyAnnotation();
 
 	@Before
 	public void setUp() throws Exception {
@@ -112,30 +112,8 @@ public class ValueExtractorManagerTest {
 		assertSame(mockStringExtractor, actual);
 	}
 	
-	private static ConfProperty getDefaultConfPropertyAnnotation() {
-		// NOTE: annotation 선언과 동일한 기본값을 반환해야한다.
-		ConfProperty prop = new ConfProperty() {
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return ConfProperty.class;
-			}
-			
-			@Override
-			public String value() {
-				return "[unassigned]";
-			}
-			
-			@Override
-			public boolean required() {
-				return false;
-			}
-			
-			@Override
-			public boolean caseSensitive() {
-				return true;
-			}
-		};
-		return prop;
+	private static PropDescription getDefaultConfPropertyAnnotation() {
+		return new PropDescription("[unassigned]", false, false);
 	}
 
 }

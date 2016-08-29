@@ -62,11 +62,12 @@ conf.data.user=tester
 // ...
 @Config
 class SampleConfig
-	@ConfProperty(value="fruits", separator=";")
+	@Name("fruits")
 	private ArrayList<String> fruitList;
 
   // enum literal should be case sensitive by default
-	@ConfProperty(required=true, caseSensitive=false) 
+	@Required
+	@CaseSensitive(false) 
 	private EnumSample planet;
 // ...
 ```
