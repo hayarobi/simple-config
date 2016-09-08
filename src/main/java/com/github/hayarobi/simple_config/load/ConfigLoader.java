@@ -76,36 +76,42 @@ public class ConfigLoader {
 				}
 				continue;
 			}
+			// Mocking framework와의 충돌을 회피하기 위한 조치.
 			// TODO: 좀 더 범용적인 형태를 반영할 수 있도록 바꾸어보자.
 			if( field.getName().startsWith("$") ) {
 				continue;
 			}
-			PropDescription propDescription = defaultPropDescription.getCopy();			
-			Name annoName = field.getAnnotation(Name.class);
-			if (annoName != null ) {
-				propDescription.name = annoName.value();
-				if( log.isTraceEnabled() ) {
-					log.trace("field {}#{} has @Name annotation, so use prop name {} instead.", clazz.getSimpleName(), field.getName(), annoName.value());
-				}
-			}
-			Required annoReq = field.getAnnotation(Required.class);
-			if (annoReq != null ) {
-				propDescription.required = annoReq.value();
-				if( log.isTraceEnabled() ) {
-					log.trace("field {}#{} has @Required annotation {} .", clazz.getSimpleName(), field.getName(), annoReq.value());
-				}
-			}
-			CaseSensitive annoCS = field.getAnnotation(CaseSensitive.class);
-			if (annoCS != null ) {
-				propDescription.caseSensitive = annoCS.value();
-				if( log.isTraceEnabled() ) {
-					log.trace("field {}#{} has @CaseSensitive annotation {} .", clazz.getSimpleName(), field.getName(), annoCS.value());
-				}
-			}
+			PropDescription propDescription = getPropDescriptionFor(clazz, field, defaultPropDescription);
 			injectValue(rawConfig, configObject, propDescription, field);
 		}
 
 		return configObject;
+	}
+	
+	private <T> PropDescription getPropDescriptionFor(Class<T> clazz, Field field, PropDescription defaultPropDescription) {
+		PropDescription propDescription = defaultPropDescription.getCopy();			
+		Name annoName = field.getAnnotation(Name.class);
+		if (annoName != null ) {
+			propDescription.name = annoName.value();
+			if( log.isTraceEnabled() ) {
+				log.trace("field {}#{} has @Name annotation, so use prop name {} instead.", clazz.getSimpleName(), field.getName(), annoName.value());
+			}
+		}
+		Required annoReq = field.getAnnotation(Required.class);
+		if (annoReq != null ) {
+			propDescription.required = annoReq.value();
+			if( log.isTraceEnabled() ) {
+				log.trace("field {}#{} has @Required annotation {} .", clazz.getSimpleName(), field.getName(), annoReq.value());
+			}
+		}
+		CaseSensitive annoCS = field.getAnnotation(CaseSensitive.class);
+		if (annoCS != null ) {
+			propDescription.caseSensitive = annoCS.value();
+			if( log.isTraceEnabled() ) {
+				log.trace("field {}#{} has @CaseSensitive annotation {} .", clazz.getSimpleName(), field.getName(), annoCS.value());
+			}
+		}
+		return propDescription;
 	}
 	
 	private <T> T createEmptyObject(Class<T> clazz) {

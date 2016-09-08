@@ -1,5 +1,11 @@
 package com.github.hayarobi.simple_config.load;
 
+/**
+ * 단일 문자열을 객체로 파싱하여 객체를 생성한다. 
+ * @author sg13park
+ *
+ * @param <T>
+ */
 public interface ValueParser<T> {
 	/**
 	 * @param str

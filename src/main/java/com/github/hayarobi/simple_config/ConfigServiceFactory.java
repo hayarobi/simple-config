@@ -64,17 +64,17 @@ public class ConfigServiceFactory {
 	
 	public ConfigService craeteServiceFromFile(String filePath) {
 		InputStream inputStream = getInputstreamFromFile(filePath);
-		RawConfig propMap;
+		RawConfig rawConfig;
 		try {
-			propMap = selectSourceReader(filePath).read(inputStream);
+			rawConfig = selectSourceReader(filePath).read(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("IO exception while reading config source "+filePath, e);
 		}
 		if(log.isTraceEnabled()) {
-			log.trace("Loaded file {} :\n {}", filePath, propMap);
+			log.trace("Loaded file {} :\n {}", filePath, rawConfig);
 		}
 		ValueExtractorManager vem = new ValueExtractorManager();
-		ConfigLoader loader = new ConfigLoader(propMap, vem);
+		ConfigLoader loader = new ConfigLoader(rawConfig, vem);
 		return new LazyConfigService(loader);
 	}
 
