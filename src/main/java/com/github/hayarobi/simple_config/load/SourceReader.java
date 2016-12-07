@@ -18,5 +18,5 @@ public interface SourceReader {
 	 * @return {@link RawConfig} 인스턴스.
 	 * @throws IOException inputStream에서 읽기를 실패할 경우.
 	 */
-	public RawConfig read(InputStream inputStream) throws IOException;
+	public RawConfContainer read(InputStream inputStream) throws IOException;
 }

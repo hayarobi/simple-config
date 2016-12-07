@@ -36,12 +36,12 @@ public class YamlTest {
 		InputStream is = YamlTest.class.getClassLoader().getResourceAsStream(SAMPLE_YAML);
 		Map<String, Object> map = (Map<String, Object>)yaml.load(is);
 		printMap(map, 0);
-//		for (Entry<String, Object> entry : map.entrySet()) {
-//			String key = entry.getKey();
-//			Object val = entry.getValue();
-//			System.out.print(key + ": ");
-//			printValue(val, 0);
-//		}
+		for (Entry<String, Object> entry : map.entrySet()) {
+			String key = entry.getKey();
+			Object val = entry.getValue();
+			System.out.print(key + ": ");
+			printValue(val, 0);
+		}
 		
 		Resolver r = null;
 	}

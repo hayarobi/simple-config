@@ -4,14 +4,18 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.hayarobi.simple_config.load.RawConfContainer;
 import com.github.hayarobi.simple_config.load.RawConfig;
+import com.github.hayarobi.simple_config.load.yaml.MapNodeConfig;
 import com.github.hayarobi.simple_config.load.yaml.TreeNodeRawConfig;
-import com.github.hayarobi.simple_config.load.yaml.snakeyaml.YamlReader;
+import com.github.hayarobi.simple_config.load.yaml.YamlRCContainer;
+import com.github.hayarobi.simple_config.load.yaml.YamlReader;
 
 public class YamlReaderTest {
 	public static final String SAMPLE_YAML = "yaml/sampleconf.yaml";
@@ -28,33 +32,29 @@ public class YamlReaderTest {
 	public final void test() throws IOException {
 		InputStream inputStream = YamlTest.class.getClassLoader().getResourceAsStream(SAMPLE_YAML);
 		YamlReader target = new YamlReader();
-		RawConfig rootConfig = target.read(inputStream);
+		RawConfContainer rootContainer = target.read(inputStream);
 		
-		assertNotNull(rootConfig);
-		assertTrue(rootConfig instanceof TreeNodeRawConfig);
+		assertNotNull(rootContainer);
+		assertTrue(rootContainer instanceof YamlRCContainer);
 		
 		RawConfig actual = null;
 		
-		actual = rootConfig.findSubConfig("list.and");
-		assertNotNull(actual);
-		assertEquals("list.and", actual.getName());
+		actual = rootContainer.findConfig("list.and");
+		assertNull(actual);
 		
-		RawConfig subActual = actual.findSubConfig("date");
-		assertNotNull(subActual);
-		assertEquals("list.and.date", subActual.getName());
-		assertNotNull(subActual.getPropertyListValue("fruits"));
-		assertNotNull(subActual.getPropertyMapValue("magicNumbers"));
-		assertNotNull(subActual.getPropertyStringValue("fromTime"));
-		
-		actual = rootConfig.findSubConfig("list.and.date");
+		actual = rootContainer.findConfig("list.and.date");
 		assertNotNull(actual);
-		assertEquals("list.and.date", actual.getName());
-		assertNotNull(actual.getPropertyListValue("fruits"));
-		assertNotNull(actual.getPropertyMapValue("magicNumbers"));
-		assertNotNull(actual.getPropertyStringValue("fromTime"));
+		assertTrue(actual instanceof MapNodeConfig);
+		Map<String, RawConfig> map = actual.getChildrenAsMap();
+		assertNotNull(map.get("fruits"));
+		assertNotNull(map.get("magicNumbers"));
+		assertNotNull(map.get("fromTime"));
+		
 		
 		System.out.println(actual);
-		assertEquals(actual, subActual);
+		System.out.println(map.get("fruits"));
+		System.out.println(map.get("magicNumbers"));
+		System.out.println(map.get("fromTime"));
 	}
 
 }

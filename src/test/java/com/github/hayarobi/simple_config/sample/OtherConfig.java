@@ -103,6 +103,25 @@ public class OtherConfig {
 		}
 		return true;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{url=");
+		builder.append(url);
+		builder.append(", resultPath=");
+		builder.append(resultPath);
+		builder.append(", numberOfArticles=");
+		builder.append(numberOfArticles);
+		builder.append(", maxConn=");
+		builder.append(maxConn);
+		builder.append(", era=");
+		builder.append(era);
+		builder.append("}");
+		return builder.toString();
+	}
 	
 	
 }

@@ -9,14 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
-import com.github.hayarobi.simple_config.load.PropertiesReader;
-import com.github.hayarobi.simple_config.load.RawConfig;
+import com.github.hayarobi.simple_config.load.RawConfContainer;
 import com.github.hayarobi.simple_config.load.SourceReader;
 import com.github.hayarobi.simple_config.load.SourceType;
-import com.github.hayarobi.simple_config.load.ValueExtractorManager;
 import com.github.hayarobi.simple_config.load.preload.ConfigClassScanner;
 import com.github.hayarobi.simple_config.load.preload.PreloadConfigService;
-import com.github.hayarobi.simple_config.load.yaml.snakeyaml.YamlReader;
+import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
+import com.github.hayarobi.simple_config.load.yaml.YamlReader;
 
 /**
  * configService를 생성하기 위한 팩토리 클래스.
@@ -31,7 +30,7 @@ public class ConfigServiceFactory {
 
 	public ConfigService craeteServiceFromResource(String resourcePath, boolean preload, String preloadPackges) {
 		InputStream inputStream = getInputstreamFromResource(resourcePath);
-		RawConfig propMap;
+		RawConfContainer propMap;
 		try {
 			propMap = selectSourceReader(resourcePath).read(inputStream);
 			
@@ -41,8 +40,7 @@ public class ConfigServiceFactory {
 		if(log.isTraceEnabled()) {
 			log.trace("Loaded resource {} :\n {}", resourcePath, propMap);
 		}
-		ValueExtractorManager vem = new ValueExtractorManager();
-		ConfigLoader loader = new ConfigLoader(propMap, vem);
+		ConfigLoader loader = new ConfigLoader(propMap, null);
 		return createService(preload, loader, preloadPackges);
 	}
 
@@ -64,17 +62,16 @@ public class ConfigServiceFactory {
 	
 	public ConfigService craeteServiceFromFile(String filePath) {
 		InputStream inputStream = getInputstreamFromFile(filePath);
-		RawConfig rawConfig;
+		RawConfContainer rawConfigContainer;
 		try {
-			rawConfig = selectSourceReader(filePath).read(inputStream);
+			rawConfigContainer = selectSourceReader(filePath).read(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("IO exception while reading config source "+filePath, e);
 		}
 		if(log.isTraceEnabled()) {
-			log.trace("Loaded file {} :\n {}", filePath, rawConfig);
+			log.trace("Loaded file {} :\n {}", filePath, rawConfigContainer);
 		}
-		ValueExtractorManager vem = new ValueExtractorManager();
-		ConfigLoader loader = new ConfigLoader(rawConfig, vem);
+		ConfigLoader loader = new ConfigLoader(rawConfigContainer, null);
 		return new LazyConfigService(loader);
 	}
 

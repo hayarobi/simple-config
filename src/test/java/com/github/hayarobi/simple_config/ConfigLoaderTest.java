@@ -6,36 +6,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
-import com.github.hayarobi.simple_config.load.PropertiesRawConfig;
-import com.github.hayarobi.simple_config.load.RawConfig;
-import com.github.hayarobi.simple_config.load.ValueExtractorManager;
+import com.github.hayarobi.simple_config.load.RawConfContainer;
+import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
 import com.github.hayarobi.simple_config.sample.DataConfig;
 import com.github.hayarobi.simple_config.sample.EnumSample;
 import com.github.hayarobi.simple_config.sample.EnumTestConfig;
 import com.github.hayarobi.simple_config.sample.IMRequiredConf;
 import com.github.hayarobi.simple_config.sample.ListAndDateConfig;
 import com.github.hayarobi.simple_config.sample.MapAndAbstractionConfig;
+import com.github.hayarobi.simple_config.sample.NodeInfo;
 import com.github.hayarobi.simple_config.sample.OtherConfig;
 
 public class ConfigLoaderTest {
 
 	public static final String SAMPLE_LIST_PROPERTIES = "sample-list.properties";
 	public static final String SAMPLECONF_PROPERTIES = "sampleconf.properties";
-	private ValueExtractorManager vem;
+
+	private PropertiesReader reader;
 
 
 	@Before
 	public void setUp() throws Exception {
-		vem = new ValueExtractorManager();
+		this.reader = new PropertiesReader();
 	}
 
 	@After
@@ -44,7 +47,7 @@ public class ConfigLoaderTest {
 	
 	public void testConfigLoaderConstructor() throws IOException {
 	
-		ConfigLoader loader1 = new ConfigLoader(createRootConfig(SAMPLECONF_PROPERTIES), vem);
+		ConfigLoader loader1 = new ConfigLoader(createRootConfig(SAMPLECONF_PROPERTIES), null);
 		DataConfig dconf1 = loader1.loadConfig(DataConfig.class);
 		OtherConfig sconf1 = loader1.loadConfig(OtherConfig.class);
 		assertNotNull(dconf1);
@@ -54,9 +57,8 @@ public class ConfigLoaderTest {
 	@Test
 	public void testGetConfig() {
 		Map<String, String> baseMap = loadResourceToMap(SAMPLECONF_PROPERTIES);
-		RawConfig rootConfig = new PropertiesRawConfig("", baseMap);
 
-		ConfigLoader target = new ConfigLoader(rootConfig, vem);
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 
 		DataConfig dconf0 = target.loadConfig(DataConfig.class);
 		assertNotNull(dconf0);
@@ -85,7 +87,7 @@ public class ConfigLoaderTest {
 		missingNotRequired.remove("com.github.hayarobi.simple_config.sample.DataConfig.user");
 		missingNotRequired.remove("com.github.hayarobi.simple_config.sample.DataConfig.pass");
 		missingNotRequired.remove("theothers.numatc");
-		target = new ConfigLoader(new PropertiesRawConfig("", missingNotRequired), vem);
+		target = new ConfigLoader(reader.createRCContainerFromMap(missingNotRequired), null);
 		DataConfig dconf1 = target.loadConfig(DataConfig.class);
 		assertEquals(dconf0.getUrl(), dconf1.getUrl());
 		assertNull(dconf1.getUser());
@@ -99,7 +101,7 @@ public class ConfigLoaderTest {
 		// required field가 빠진 경우 
 		Map<String, String> missingRequired = new HashMap<String, String>(baseMap);
 		missingRequired.remove("theothers.result");
-		target = new ConfigLoader(new PropertiesRawConfig("", missingRequired), vem);
+		target = new ConfigLoader(reader.createRCContainerFromMap(missingRequired), null);
 		try {
 			OtherConfig toException = target.loadConfig(OtherConfig.class);
 			fail();
@@ -113,9 +115,10 @@ public class ConfigLoaderTest {
 	 * @param propResourceName 
 	 * @return
 	 */
-	protected RawConfig createRootConfig(String propResourceName) {
+	protected RawConfContainer createRootConfig(String propResourceName) {
+		
 		Map<String, String> baseMap = loadResourceToMap(propResourceName);
-		return new PropertiesRawConfig("", baseMap);
+		return reader.createRCContainerFromMap(baseMap);
 	}
 
 	/**
@@ -141,7 +144,7 @@ public class ConfigLoaderTest {
 	public void testArrayAndDate() {
 		Map<String, String> baseMap = loadResourceToMap(SAMPLE_LIST_PROPERTIES);
 
-		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 
 		ListAndDateConfig conf = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf.getFruitList());
@@ -163,23 +166,52 @@ public class ConfigLoaderTest {
 
 		Map<String, String> props1 = new HashMap<String, String>(baseMap);
 		props1.put("list.and.date.fromTime", "2015-04-03 12:34:56.111");
-		target = new ConfigLoader(new PropertiesRawConfig("", props1), vem);
+		target = new ConfigLoader(reader.createRCContainerFromMap(props1), null);
 		ListAndDateConfig conf1 = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf1.getFromTime());
 		System.out.println( "2015-04-03 12:34:56.111 and "+conf1.getFromTime());
 
 		props1.put("list.and.date.fromTime", "2015-05-04 12:34:56");
-		target = new ConfigLoader(new PropertiesRawConfig("", props1), vem);
+		target = new ConfigLoader(reader.createRCContainerFromMap(props1), null);
 		conf1 = target.loadConfig(ListAndDateConfig.class);
 		assertNotNull(conf1.getFromTime());
 		System.out.println( "2015-05-04 12:34:56 and "+conf1.getFromTime());
 	}
 	
 	@Test
+	public void testListAndDate2() {
+		Map<String, String> baseMap = loadResourceToMap(SAMPLE_LIST_PROPERTIES);
+
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
+
+		ListAndDateConfig conf = target.loadConfig(ListAndDateConfig.class);
+
+		assertNull(conf.getNullList());
+		List<NodeInfo> empty = conf.getEmptyList();
+		assertNotNull(empty);
+		assertTrue(empty.isEmpty());
+		
+		List<OtherConfig> pojoList = conf.getPojoList();
+		assertNotNull(pojoList);
+		assertEquals(4, pojoList.size());
+		System.out.println("PojoList "+pojoList.toString());
+		TreeMap<Integer, OtherConfig> pojoMap = conf.getPojoMap();
+		assertNotNull(pojoMap);
+		assertEquals(4, pojoMap.size());
+		int[] keys = {1,2,3,5};
+		int idx = 0;
+		for (int i : keys) {
+			assertTrue(pojoMap.containsKey(i));
+			assertTrue(pojoMap.containsValue(pojoList.get(idx++)));
+
+		}
+		
+	}
+	
+	@Test
 	public void testEnum() {
 		Map<String, String> baseMap = loadResourceToMap(SAMPLECONF_PROPERTIES);
-
-		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 
 
 		EnumTestConfig actual = target.loadConfig(EnumTestConfig.class);
@@ -197,7 +229,7 @@ public class ConfigLoaderTest {
 		Map<String, String> wrongLiterals = new HashMap<String, String>(baseMap);
 		wrongLiterals.put("enums.planet", "PLUTO");
 		try {
-			target = target = new ConfigLoader(new PropertiesRawConfig("", wrongLiterals), vem);
+			target = target = new ConfigLoader(reader.createRCContainerFromMap(wrongLiterals), null);
 			actual = target.loadConfig(EnumTestConfig.class);
 			fail();
 		} catch(RuntimeException e) {
@@ -209,7 +241,7 @@ public class ConfigLoaderTest {
 	@Test
 	public void testMap() {
 		Map<String, String> baseMap = loadResourceToMap(SAMPLE_LIST_PROPERTIES);
-		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 
 		MapAndAbstractionConfig conf = target.loadConfig(MapAndAbstractionConfig.class);
 		assertNotNull(conf.getFruitList());
@@ -241,7 +273,7 @@ public class ConfigLoaderTest {
 	public void testRequiredPropConfClass() {
 		Map<String, String> baseMap = new HashMap<String, String>();
 		baseMap.put("IMRequiredConf.trueAnnoInt", "4");
-		ConfigLoader target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		ConfigLoader target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 		
 		try {
 			target.loadConfig(IMRequiredConf.class);
@@ -251,7 +283,7 @@ public class ConfigLoaderTest {
 		}
 
 		baseMap.put("IMRequiredConf.noAnnoInt", "2");
-		target = new ConfigLoader(new PropertiesRawConfig("", baseMap), vem);
+		target = new ConfigLoader(reader.createRCContainerFromMap(baseMap), null);
 		IMRequiredConf actual = target.loadConfig(IMRequiredConf.class);
 		assertEquals(2, actual.getNoAnnoInt());
 	}
