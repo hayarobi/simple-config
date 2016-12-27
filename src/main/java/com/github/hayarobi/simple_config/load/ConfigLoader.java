@@ -15,7 +15,7 @@ import com.github.hayarobi.simple_config.load.mapping.ObjectMapper;
 
 /**
  * 
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class ConfigLoader {
@@ -37,8 +37,8 @@ public class ConfigLoader {
 
 	/**
 	 * map의 값을 바탕으로 설정 객체를 생성해서 반환한다. 
-	 * @param clazz
-	 * @return
+	 * @param clazz 로드를 하려는 설정 객체의 클래스
+	 * @return clazz의 인스턴스
 	 */
 	public <T> T loadConfig(Class<T> clazz) {
 		Config configAnnotation = clazz.getAnnotation(Config.class);
@@ -139,41 +139,7 @@ public class ConfigLoader {
 		return configObject;
 	}
 
-//	/**
-//	 * @param configObject
-//	 * @param field
-//	 * @param value
-//	 */
-//	private <VT> void injectValue(RawConfig rawConfig, Object configObject, PropDescription propDescription, Field field) {
-//		String propName = selectPropertyName(field, propDescription);
-//		try {
-//			ObjectValueExtractor<VT> valueExtractor = vem.getExtractor(field, propDescription);
-//			VT value = valueExtractor.extractValue(rawConfig, propName);
-//			field.setAccessible(true);
-//			field.set(configObject, value);
-//			if( log.isTraceEnabled() ) {
-//				log.trace("Set config value {} to field {}", value, field.getName());
-//			}
-//		} catch(PropertyNotFoundException e) {
-//			if( propDescription.required ) {
-//				throw new RuntimeException("The value of required field "+field.getName()+" is missing.");
-//			} else {
-//				// leave this field, to remain default value.
-//			}
-//		} catch (IllegalArgumentException e) {
-//			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
-//		} catch (IllegalAccessException e) {
-//			throw new RuntimeException("Failed to set config value to "+field.getName(),e);
-//		} finally {
-//			field.setAccessible(false);
-//		}
-//	}
 
-	/**
-	 * @param field
-	 * @param propAnnotation
-	 * @return
-	 */
 	protected String selectPropertyName(Field field, PropDescription propAnnotation) {
 		String propName;
 		if( ExtractHelper.UNASSIGNED_PLACEHOLDER.equals(propAnnotation.name)) {

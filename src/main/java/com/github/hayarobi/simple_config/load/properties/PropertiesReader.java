@@ -14,11 +14,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.hayarobi.simple_config.load.RawConfContainer;
-import com.github.hayarobi.simple_config.load.RawConfig;
 import com.github.hayarobi.simple_config.load.SourceReader;
 
 /**
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class PropertiesReader implements SourceReader {

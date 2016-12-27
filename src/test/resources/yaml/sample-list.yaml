@@ -1,0 +1,33 @@
+#default
+list.and.date:
+    fruits:
+        - apple
+        - orange
+        - mango
+    magicNumbers:
+        - 15
+        - 20
+    fromTime: 2015-03-02 12:34:56.111+05:00
+# complex
+    complex:
+        - url: http://172.21.70.101:6800/
+          result: /home/search/tmp/result
+          numatc: 31
+          maxConn: 11
+          era: 99.9
+        - url: http://172.21.70.102:6800/
+          result: /home/search/tmp/result
+          numatc: 32
+          maxConn: 12
+          era: 99.9
+        - url: http://172.21.70.103:6800/
+          result: /home/search/tmp/result
+          numatc: 33
+          maxConn: 13
+          era: 99.9
+        - url: http://172.21.70.105:6800/
+          result: /home/search/tmp/result
+          numatc: 35
+          maxConn: 15
+          era: 99.9
+    emptyList: []

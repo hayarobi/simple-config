@@ -4,7 +4,7 @@
 
 	<groupId>com.github.hayarobi</groupId>
 	<artifactId>simple-config</artifactId>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.6</version>
 
 
 	<properties>
@@ -97,7 +97,7 @@
 			<optional>true</optional>
 		</dependency>
 
-	<!-- for reading yaml -->
+	<!-- This is optional only for reading yaml -->
 	<dependency>
 		<groupId>org.yaml</groupId>
 		<artifactId>snakeyaml</artifactId>

@@ -4,7 +4,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
 
 /**
  * 스칼라 값은 무조건 스트링으로만 받는다. 변환은 자체 변환기로 한다.
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class NonImplicitResolver extends Resolver {

@@ -17,10 +17,10 @@ public class ConfigServiceFactoryTest {
 	public static final String DIR_PREFIX = "src/test/resources/";
 	
 	@Test
-	public void testCraeteServiceFromResource() {
+	public void testCreateServiceFromResource() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
 		
-		ConfigService actual = target.craeteServiceFromResource(SAMPLECONF_PROPERTIES);
+		ConfigService actual = target.createServiceFromResource(SAMPLECONF_PROPERTIES);
 		assertNotNull(actual);
 		
 		DataConfig dconf0 = actual.getConfig(DataConfig.class);
@@ -39,7 +39,7 @@ public class ConfigServiceFactoryTest {
 		assertEquals(99.9, sconf0.getEra(), 0.00001);
 
 		try {
-			target.craeteServiceFromResource("nothing.properties");
+			target.createServiceFromResource("nothing.properties");
 			fail();
 		} catch(IllegalArgumentException expectedEx) {
 			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.
@@ -48,10 +48,10 @@ public class ConfigServiceFactoryTest {
 
 
 	@Test
-	public void testCraeteServiceWithYaml() {
+	public void testCreateServiceWithYaml() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
 		
-		ConfigService actual = target.craeteServiceFromResource(SAMPLECONF_YAML);
+		ConfigService actual = target.createServiceFromResource(SAMPLECONF_YAML);
 		assertNotNull(actual);
 		
 		DataConfig dconf0 = actual.getConfig(DataConfig.class);
@@ -70,7 +70,7 @@ public class ConfigServiceFactoryTest {
 		assertEquals(99.9, sconf0.getEra(), 0.00001);
 
 		try {
-			target.craeteServiceFromResource("nothing.properties");
+			target.createServiceFromResource("nothing.properties");
 			fail();
 		} catch(IllegalArgumentException expectedEx) {
 			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.
@@ -78,10 +78,10 @@ public class ConfigServiceFactoryTest {
 	}
 	
 	@Test
-	public void testCraeteServiceFromResourceWithPreload() {
+	public void testCreateServiceFromResourceWithPreload() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
 		
-		ConfigService actual = target.craeteServiceFromResource(SAMPLECONF_PROPERTIES, true, "com.github.hayarobi.simple_config");
+		ConfigService actual = target.createServiceFromResource(SAMPLECONF_PROPERTIES, true, "com.github.hayarobi.simple_config");
 		assertNotNull(actual);
 		
 		DataConfig dconf0 = actual.getConfig(DataConfig.class);
@@ -100,17 +100,17 @@ public class ConfigServiceFactoryTest {
 		assertEquals(99.9, sconf0.getEra(), 0.00001);
 
 		try {
-			target.craeteServiceFromResource("nothing.properties");
+			target.createServiceFromResource("nothing.properties");
 			fail();
 		} catch(IllegalArgumentException expectedEx) {
 			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.
 		}
 	}
 	@Test
-	public void testCraeteServiceFromFile() {
+	public void testCreateServiceFromFile() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
-		ConfigService expected = target.craeteServiceFromResource(SAMPLECONF_PROPERTIES);
-		ConfigService actual = target.craeteServiceFromFile(DIR_PREFIX+SAMPLECONF_PROPERTIES);
+		ConfigService expected = target.createServiceFromResource(SAMPLECONF_PROPERTIES);
+		ConfigService actual = target.createServiceFromFile(DIR_PREFIX+SAMPLECONF_PROPERTIES);
 		assertNotNull(actual);
 
 		DataConfig expDconf = expected.getConfig(DataConfig.class);
@@ -118,7 +118,7 @@ public class ConfigServiceFactoryTest {
 		assertEquals(expDconf, actDconf);
 		
 		try {
-			target.craeteServiceFromFile("No/Dir/"+SAMPLECONF_PROPERTIES);
+			target.createServiceFromFile("No/Dir/"+SAMPLECONF_PROPERTIES);
 			fail();
 		} catch(IllegalArgumentException expectedEx) {
 			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.
@@ -128,8 +128,8 @@ public class ConfigServiceFactoryTest {
 	@Test
 	public void testCreateYamlService() {
 		ConfigServiceFactory target = new ConfigServiceFactory();
-		ConfigService expected = target.craeteServiceFromResource(SAMPLECONF_YAML);
-		ConfigService actual = target.craeteServiceFromFile(DIR_PREFIX+SAMPLECONF_YAML);
+		ConfigService expected = target.createServiceFromResource(SAMPLECONF_YAML);
+		ConfigService actual = target.createServiceFromFile(DIR_PREFIX+SAMPLECONF_YAML);
 		assertNotNull(actual);
 
 		DataConfig expDconf = expected.getConfig(DataConfig.class);
@@ -137,7 +137,7 @@ public class ConfigServiceFactoryTest {
 		assertEquals(expDconf, actDconf);
 		
 		try {
-			target.craeteServiceFromFile("No/Dir/"+SAMPLECONF_YAML);
+			target.createServiceFromFile("No/Dir/"+SAMPLECONF_YAML);
 			fail();
 		} catch(IllegalArgumentException expectedEx) {
 			// TODO: 예외를 정하고 나면 바뀌어야할 것 같다.

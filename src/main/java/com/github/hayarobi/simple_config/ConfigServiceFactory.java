@@ -20,7 +20,7 @@ import com.github.hayarobi.simple_config.load.yaml.YamlReader;
 /**
  * configService를 생성하기 위한 팩토리 클래스.
  * 
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class ConfigServiceFactory {
@@ -28,7 +28,7 @@ public class ConfigServiceFactory {
 	public ConfigServiceFactory() {
 	}
 
-	public ConfigService craeteServiceFromResource(String resourcePath, boolean preload, String preloadPackges) {
+	public ConfigService createServiceFromResource(String resourcePath, boolean preload, String preloadPackges) {
 		InputStream inputStream = getInputstreamFromResource(resourcePath);
 		RawConfContainer propMap;
 		try {
@@ -56,11 +56,11 @@ public class ConfigServiceFactory {
 		}
 	}
 
-	public ConfigService craeteServiceFromResource(String resourcePath) {
-		return craeteServiceFromResource(resourcePath, false, null);
+	public ConfigService createServiceFromResource(String resourcePath) {
+		return createServiceFromResource(resourcePath, false, null);
 	}
 	
-	public ConfigService craeteServiceFromFile(String filePath) {
+	public ConfigService createServiceFromFile(String filePath, boolean preload, String preloadPackges) {
 		InputStream inputStream = getInputstreamFromFile(filePath);
 		RawConfContainer rawConfigContainer;
 		try {
@@ -72,9 +72,13 @@ public class ConfigServiceFactory {
 			log.trace("Loaded file {} :\n {}", filePath, rawConfigContainer);
 		}
 		ConfigLoader loader = new ConfigLoader(rawConfigContainer, null);
-		return new LazyConfigService(loader);
+		return createService(preload, loader, preloadPackges);
 	}
 
+	public ConfigService createServiceFromFile(String filePath) {
+		return createServiceFromFile(filePath, false, null);
+	}
+	
 	private InputStream getInputstreamFromResource(String resourcePath) {
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
 		if (null == inputStream) {

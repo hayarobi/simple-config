@@ -1,4 +1,4 @@
-package com.github.hayarobi.simple_config;
+package com.github.hayarobi.simple_config.experiments;
 
 import static org.junit.Assert.assertNotNull;
 

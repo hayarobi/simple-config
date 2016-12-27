@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * 이것이 설정된 필드는 무시한다.
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 @Target(ElementType.FIELD)

@@ -103,6 +103,7 @@ public class OtherConfig {
 		}
 		return true;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

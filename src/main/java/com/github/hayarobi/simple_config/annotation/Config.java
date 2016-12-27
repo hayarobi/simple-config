@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * 이 주석이 붙은 클래스는 설정을 담은 객체임을 알림.
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 @Target(ElementType.TYPE)
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface Config {
 	/**
 	 * 설정 객체 이름을 수동으로 지정. 이름이 없을 경우 해당 설정 클래스의 FQDN으로 찾는다.
-	 * @return
+	 * @return {@link String} 설정 소스의 이름
 	 */
 	public String value() default "[unassigned]";
 	

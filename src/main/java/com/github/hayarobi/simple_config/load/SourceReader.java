@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 /**
  * config source를 읽어서 속성값 map을 반환한다.
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public interface SourceReader {

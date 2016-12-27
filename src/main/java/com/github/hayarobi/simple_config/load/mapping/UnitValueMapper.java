@@ -11,7 +11,7 @@ import com.github.hayarobi.simple_config.load.RawConfig;
 /**
  * 단일 문자열을 파싱해 객체를 로드하는 클래스의 공통 부모.  
  *  
- * @author sg13park
+ * @author Hayarobi Park
  *
  * @param <T> 이 로더가 생성할 객체의 클래스
  */

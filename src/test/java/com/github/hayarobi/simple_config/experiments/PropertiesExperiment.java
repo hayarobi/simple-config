@@ -1,4 +1,4 @@
-package com.github.hayarobi.simple_config.exp;
+package com.github.hayarobi.simple_config.experiments;
 
 import java.io.IOException;
 import java.io.InputStream;

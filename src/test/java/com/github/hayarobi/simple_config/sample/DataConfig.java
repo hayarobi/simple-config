@@ -4,7 +4,7 @@ import com.github.hayarobi.simple_config.annotation.Config;
 
 /**
  * Overridden methods, such as {@link #equals(Object)} and {@link #hashCode()}, are for unit testing, not required in actual use. 
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 @Config

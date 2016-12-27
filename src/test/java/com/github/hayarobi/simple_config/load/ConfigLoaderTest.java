@@ -1,4 +1,4 @@
-package com.github.hayarobi.simple_config;
+package com.github.hayarobi.simple_config.load;
 
 import static org.junit.Assert.*;
 
@@ -195,17 +195,6 @@ public class ConfigLoaderTest {
 		assertNotNull(pojoList);
 		assertEquals(4, pojoList.size());
 		System.out.println("PojoList "+pojoList.toString());
-		TreeMap<Integer, OtherConfig> pojoMap = conf.getPojoMap();
-		assertNotNull(pojoMap);
-		assertEquals(4, pojoMap.size());
-		int[] keys = {1,2,3,5};
-		int idx = 0;
-		for (int i : keys) {
-			assertTrue(pojoMap.containsKey(i));
-			assertTrue(pojoMap.containsValue(pojoList.get(idx++)));
-
-		}
-		
 	}
 	
 	@Test

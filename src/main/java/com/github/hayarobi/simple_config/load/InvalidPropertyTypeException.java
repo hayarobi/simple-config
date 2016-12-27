@@ -2,7 +2,7 @@ package com.github.hayarobi.simple_config.load;
 
 /**
  * collection(혹은 map)을 단일값으로 읽어오려고 할 때. 혹은 그 반대 상황.
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class InvalidPropertyTypeException extends RuntimeException {

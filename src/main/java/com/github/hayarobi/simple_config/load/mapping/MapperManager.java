@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Pojo 설정 객체 생성을 담당하는 팩토리 클래스. 
- * @author sg13park
+ * @author Hayarobi Park
  *
  */
 public class MapperManager {

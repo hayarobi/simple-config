@@ -6,6 +6,8 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +24,7 @@ import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
 import com.github.hayarobi.simple_config.sample.ComplexConfig;
 import com.github.hayarobi.simple_config.sample.CyclicPropsConfig;
 import com.github.hayarobi.simple_config.sample.IndirectCycle;
+import com.github.hayarobi.simple_config.sample.MapCollectionMap;
 import com.github.hayarobi.simple_config.sample.TestClass;
 
 public class MapperManagerTest {
@@ -89,6 +92,29 @@ public class MapperManagerTest {
 		IndirectCycle indirect = dconf1.getIndirect();
 		assertNotNull(indirect.getMid());
 		System.out.println(indirect.getMid().getLoop());
+	}
+	
+	@Test
+	public void testNestedCollection() throws IOException {
+		RawConfContainer rcc = new PropertiesReader().read(
+				getClass().getClassLoader().getResourceAsStream(SUBCONF_PROPERTIES));
+		MapperManager target = new MapperManager();
+
+		ObjectMapper<MapCollectionMap> mapper = target.getObjectMapper(MapCollectionMap.class);
+		assertTrue(mapper instanceof PojoObjectMapper);
+		
+		MapCollectionMap dconf1 = mapper.mapToObject(rcc.findConfig("mcm"));
+
+		assertNotNull(dconf1);
+		assertNotNull(dconf1.getCmap());
+		Map<String, List<Map<Double, String>>> member = dconf1.getCmap();
+		
+		assertEquals(3, member.size());
+		List<Map<Double, String>> listA = member.get("a");
+		assertNotNull(listA);
+		assertEquals(3, listA.size());
+		
+		System.out.println(member);		
 	}
 	
 	private TestClass dummyField;

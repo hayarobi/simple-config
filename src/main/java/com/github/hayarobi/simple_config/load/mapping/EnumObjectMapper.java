@@ -11,7 +11,7 @@ import com.github.hayarobi.simple_config.load.RawConfig;
 /**
  * 단일 문자열을 바로 객체로 추출하는 클래스.
  * 
- * @author sg13park
+ * @author Hayarobi Park
  *
  * @param <T>
  */
