@@ -13,7 +13,7 @@ import com.github.hayarobi.simple_config.load.RawConfig;
  * 
  * @author Hayarobi Park
  *
- * @param <T>
+ * @param <T> target enum class
  */
 public class EnumObjectMapper<T extends Enum<T>> extends UnitValueMapper<T> implements ObjectMapper<T> {
 	private Logger log = LoggerFactory.getLogger(EnumObjectMapper.class);

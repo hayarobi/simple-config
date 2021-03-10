@@ -22,8 +22,7 @@ public @interface Config {
 	/**
 	 * {@link Required} 주석이 안 달린 속성값들의 필수 지정 여부.  
 	 *  
-	 * @return true 주석이 없는 속성은 필수 속성으로 간주된다.
-	 * @return false 주석이 없는 속성은 선택 속성으로 간주된다.  
+	 * @return true if this property is required config, false if not (i.e. this is optional, and will be used by default value if you didn't specify the value.)
 	 */
 	public boolean propRequired() default false;
 }
