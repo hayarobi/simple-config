@@ -1,3 +1,6 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/7b93b1cfc4d0dbd74369/maintainability)](https://codeclimate.com/github/hayarobi/simple-config/maintainability) 
+[![Test Coverage](https://api.codeclimate.com/v1/badges/7b93b1cfc4d0dbd74369/test_coverage)](https://codeclimate.com/github/hayarobi/simple-config/test_coverage)
+
 # simple-config
 Annotation based simpl configuration helper libbrary
 

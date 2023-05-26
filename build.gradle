@@ -5,6 +5,8 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'jacoco'
+    id("net.razvan.jacoco-to-cobertura") version "1.1.2"
 }
 
 repositories {
@@ -32,6 +34,27 @@ java {
     withSourcesJar()
 }
 
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file('reports/xml/jacocoTestReport.xml')
+        csv.required = false
+    }
+}
+
+tasks.register('reportToCobertura') {
+    dependsOn 'jacocoTestReport'
+    dependsOn 'jacocoToCobertura'
+    doLast {
+        print "making cobertura report"
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -42,4 +65,9 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+jacocoToCobertura {
+    inputFile.set(file("$buildDir/reports/xml/jacocoTestReport.xml"))
+    outputFile.set(file("$buildDir/reports/xml/cobertura.xml"))
 }
