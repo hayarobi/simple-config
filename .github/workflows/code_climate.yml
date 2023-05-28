@@ -44,6 +44,6 @@ jobs:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
         coverageCommand: gradle reportToCobertura
-        coverageLocations: ${{github.workspace}}/build/reports/xml/cobertura.xml:cobertura
+        coverageLocations: ${{github.workspace}}/build/reports/xml/jacocoTestReport.xml:jacoco
         debug: true
 
