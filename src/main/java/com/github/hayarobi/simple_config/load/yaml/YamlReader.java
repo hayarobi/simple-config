@@ -1,33 +1,31 @@
 package com.github.hayarobi.simple_config.load.yaml;
 
+import com.github.hayarobi.simple_config.load.DateUtils;
+import com.github.hayarobi.simple_config.load.RawConfContainer;
+import com.github.hayarobi.simple_config.load.SourceReader;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.representer.Representer;
-
-import com.github.hayarobi.simple_config.load.RawConfContainer;
-import com.github.hayarobi.simple_config.load.SourceReader;
-import com.github.hayarobi.simple_config.load.yaml.snakeyaml.NonImplicitResolver;
 
 public class YamlReader implements SourceReader {
 	
 	@Override
 	public RawConfContainer read(InputStream inputStream) throws IOException {
-		Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new NonImplicitResolver());
-		Map<String, Object> map = (Map<String, Object>)yaml.load(inputStream);
+		Yaml yaml = new Yaml();
+		Map<String, Object> map = yaml.load(inputStream);
 		MapNodeConfig rootConfig = new MapNodeConfig();
 		for (Entry<String, Object> entry : map.entrySet()) {
 			// 설정 객체 특성상 최상위 객체는 Map만이 가능하다. 
-			if( !Map.class.isInstance(entry.getValue()) ) {
+			if( !(entry.getValue() instanceof Map)) {
 				continue;
 			}
-			MapNodeConfig childConf = createMapNode((Map)entry.getValue());
+			@SuppressWarnings("unchecked") MapNodeConfig childConf =
+					createMapNode((Map<String, Object>)entry.getValue());
 			rootConfig.addChild(entry.getKey(), childConf);
 		}
 		return new YamlRCContainer(rootConfig);
@@ -48,16 +46,23 @@ public class YamlReader implements SourceReader {
 		}
 		return conf;
 	}
+
+	private StringNodeConfig createDateString(Date value) {
+		return new StringNodeConfig(DateUtils.format(value));
+	}
 	
 	private StringNodeConfig createStringNode(Object value) {
 		return new StringNodeConfig(value.toString());
 	}
 
-	private TreeNodeRawConfig createNode(Object value) {
-		if( Map.class.isInstance(value) ) {
-			return createMapNode((Map)value);
-		} else if( Collection.class.isInstance(value) ) {
-			return createListNode((Collection)value);
+	@SuppressWarnings("unchecked")
+    private TreeNodeRawConfig createNode(Object value) {
+		if(value instanceof Map) {
+			return createMapNode((Map<String, Object>)value);
+		} else if(value instanceof Collection) {
+			return createListNode((Collection<Object>)value);
+		} else if(value instanceof Date) {
+			return createDateString((Date)value);
 		} else {
 			return createStringNode(value);
 		}

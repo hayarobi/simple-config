@@ -1,7 +1,12 @@
 package com.github.hayarobi.simple_config.load.mapping;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import com.github.hayarobi.simple_config.load.PropDescription;
+import com.github.hayarobi.simple_config.load.RawConfContainer;
+import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
+import com.github.hayarobi.simple_config.sample.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -9,23 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.hayarobi.simple_config.load.PropDescription;
-import com.github.hayarobi.simple_config.load.RawConfContainer;
-import com.github.hayarobi.simple_config.load.mapping.CollectionObjectMapper;
-import com.github.hayarobi.simple_config.load.mapping.MapperManager;
-import com.github.hayarobi.simple_config.load.mapping.ObjectMapper;
-import com.github.hayarobi.simple_config.load.mapping.PojoObjectMapper;
-import com.github.hayarobi.simple_config.load.mapping.UnitValueMapper;
-import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
-import com.github.hayarobi.simple_config.sample.ComplexConfig;
-import com.github.hayarobi.simple_config.sample.CyclicPropsConfig;
-import com.github.hayarobi.simple_config.sample.IndirectCycle;
-import com.github.hayarobi.simple_config.sample.MapCollectionMap;
-import com.github.hayarobi.simple_config.sample.TestClass;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class MapperManagerTest {
 	public static final String SUBCONF_PROPERTIES = "subconf.properties";

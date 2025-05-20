@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.hayarobi.simple_config.load.DateUtils;
 import com.github.hayarobi.simple_config.load.RawConfig;
 
 /**
@@ -114,13 +115,8 @@ class DoubleMapper extends UnitValueMapper<Double> {
 }
 
 class DateMapper extends UnitValueMapper<Date> {
-	private static final String UTC_TIMEZONE = "Z";
-	public static final String INPUT_DATE_PATTERN = "([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})(\\.[0-9]{3})?([+-][0-9]{2}:[0-9]{2})?";
+	public static final String INPUT_DATE_PATTERN = "([0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2})(\\.[0-9]{3})?([+-][0-9]{2}:[0-9]{2})?";
 	private static final Pattern pat = Pattern.compile(INPUT_DATE_PATTERN);
-	private static final String FORMAT_FULL = "yyyy-MM-dd HH:mm:ss.SSSX";
-	private static final String FORMAT_TZ = "yyyy-MM-dd HH:mm:ssX";
-	private static final String FORMAT_MILLY = "yyyy-MM-dd HH:mm:ss.SSS";
-	private static final String FORMAT_NOTHING  = "yyyy-MM-dd HH:mm:ss";
 
 	public Date parse(String str) {
 		Matcher matcher = pat.matcher(str);
@@ -131,15 +127,15 @@ class DateMapper extends UnitValueMapper<Date> {
 		// with milisseconds
         if( matcher.group(2) != null ) {
             if( matcher.group(3) != null ) {
-            	formatString = FORMAT_FULL;
+            	formatString = DateUtils.FORMAT_FULL;
             } else {
-            	formatString = FORMAT_MILLY;
+            	formatString = DateUtils.FORMAT_MILLY;
             }
         } else {
             if( matcher.group(3) != null ) {
-            	formatString = FORMAT_TZ;
+            	formatString = DateUtils.FORMAT_TZ;
             } else {
-            	formatString = FORMAT_NOTHING;
+            	formatString = DateUtils.FORMAT_NOTHING;
             }
         }
 

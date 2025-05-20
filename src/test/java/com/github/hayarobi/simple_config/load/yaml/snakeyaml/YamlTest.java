@@ -32,7 +32,7 @@ public class YamlTest {
 	@Test
 	public final void test() {
 		
-		Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new OnlyStringResolver());
+		Yaml yaml = new Yaml();
 		InputStream is = YamlTest.class.getClassLoader().getResourceAsStream(SAMPLE_YAML);
 		Map<String, Object> map = (Map<String, Object>)yaml.load(is);
 		printMap(map, 0);
