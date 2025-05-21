@@ -1,31 +1,24 @@
 package com.github.hayarobi.simple_config.load.yaml.snakeyaml;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.validator.ValidateWith;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.representer.Representer;
-import org.yaml.snakeyaml.resolver.Resolver;
 
 public class YamlTest {
 	public static final String SAMPLE_YAML = "yaml/sampleconf.yaml";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
@@ -47,7 +40,6 @@ public class YamlTest {
 	}
 
 	/**
-	 * @param key
 	 * @param val
 	 */
 	private void printValue(Object val, int level) {

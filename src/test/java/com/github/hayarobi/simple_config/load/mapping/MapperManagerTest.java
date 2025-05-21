@@ -4,9 +4,9 @@ import com.github.hayarobi.simple_config.load.PropDescription;
 import com.github.hayarobi.simple_config.load.RawConfContainer;
 import com.github.hayarobi.simple_config.load.properties.PropertiesReader;
 import com.github.hayarobi.simple_config.sample.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -14,17 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class MapperManagerTest {
 	public static final String SUBCONF_PROPERTIES = "subconf.properties";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 

@@ -1,7 +1,5 @@
 package com.github.hayarobi.simple_config.experiments;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -9,21 +7,21 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GenericTypeTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public final void test() throws NoSuchFieldException, SecurityException {
 		Class t = SamplePojo.class;
 		Field sgField = t.getDeclaredField("sg");

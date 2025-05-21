@@ -1,15 +1,14 @@
 package com.github.hayarobi.simple_config.experiments;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.github.hayarobi.simple_config.annotation.Config;
 import com.github.hayarobi.simple_config.sample.DataConfig;
+import org.junit.jupiter.api.Test;
 
 public class TestConfig {
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void findClasses() {
 		Class<?> targetClass = DataConfig.class;
 		

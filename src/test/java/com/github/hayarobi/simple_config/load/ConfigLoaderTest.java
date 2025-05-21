@@ -1,6 +1,6 @@
 package com.github.hayarobi.simple_config.load;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +12,9 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.load.RawConfContainer;
@@ -36,12 +36,12 @@ public class ConfigLoaderTest {
 	private PropertiesReader reader;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		this.reader = new PropertiesReader();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 	

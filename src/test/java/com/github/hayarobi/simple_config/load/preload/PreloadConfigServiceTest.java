@@ -1,13 +1,13 @@
 package com.github.hayarobi.simple_config.load.preload;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
 import com.github.hayarobi.simple_config.sample.DataConfig;
@@ -19,11 +19,11 @@ public class PreloadConfigServiceTest {
 
 	
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 

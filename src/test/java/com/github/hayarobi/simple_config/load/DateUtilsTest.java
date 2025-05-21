@@ -1,11 +1,10 @@
 package com.github.hayarobi.simple_config.load;
 
-import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-public class DateUtilsTest extends TestCase {
+public class DateUtilsTest {
 
     @Test
     public void testTestFormat() {

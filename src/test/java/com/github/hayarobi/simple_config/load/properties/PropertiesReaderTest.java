@@ -1,14 +1,14 @@
 package com.github.hayarobi.simple_config.load.properties;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.hayarobi.simple_config.load.InvalidPropertyTypeException;
 import com.github.hayarobi.simple_config.load.RawConfContainer;
@@ -18,11 +18,11 @@ public class PropertiesReaderTest {
 	public static final String SAMPLE_LIST_PROPERTIES = "sample-list.properties";
 	public static final String SAMPLECONF_PROPERTIES = "sampleconf.properties";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 

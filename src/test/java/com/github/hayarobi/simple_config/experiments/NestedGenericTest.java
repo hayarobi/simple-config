@@ -1,7 +1,5 @@
 package com.github.hayarobi.simple_config.experiments;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,20 +9,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NestedGenericTest {
 	private Logger log = LoggerFactory.getLogger(NestedGenericTest.class);
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 

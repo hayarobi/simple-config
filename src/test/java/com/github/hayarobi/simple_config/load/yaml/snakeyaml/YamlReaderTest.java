@@ -1,6 +1,6 @@
 package com.github.hayarobi.simple_config.load.yaml.snakeyaml;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import com.github.hayarobi.simple_config.load.ConfigLoader;
@@ -28,11 +28,11 @@ public class YamlReaderTest {
 
 	public static final String SAMPLE_YAML_LIST = "yaml/sample-list.yaml";
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 

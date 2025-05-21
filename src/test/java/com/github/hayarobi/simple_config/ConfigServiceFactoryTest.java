@@ -1,8 +1,8 @@
 package com.github.hayarobi.simple_config;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.hayarobi.simple_config.ConfigService;
 import com.github.hayarobi.simple_config.ConfigServiceFactory;
