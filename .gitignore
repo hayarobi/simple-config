@@ -11,3 +11,6 @@ buildNumber.properties
 gradlew
 gradlew.bat
 /gradle
+
+# 이 프로젝트는 gradel.properties에 인증정보가 포함되서 제외함.
+/gradle.properties
